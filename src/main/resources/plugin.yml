@@ -1,0 +1,31 @@
+name: "JustTPA"
+version: "1.0"
+main: "de.justplayer.tpa.Plugin"
+api-version: '1.19'
+author: "JustPlayer"
+description: "A simple TPA plugin without unnecessary dependencies"
+commands:
+  tpa:
+    description: "Teleport to a player"
+    usage: "/tpa <player>"
+    permission: "justplayer.tpa.request"
+  tpaccept:
+    description: "Accept a teleport request"
+    usage: "/tpaccept"
+    permission: "justplayer.tpa.accept"
+  tpdeny:
+    description: "Deny a teleport request"
+    usage: "/tpdeny"
+    permission: "justplayer.tpa.deny"
+  tpacancel:
+    description: "Cancel a teleport request"
+    usage: "/tpacancel"
+    permission: "justplayer.tpa.cancel"
+  tpahere:
+    description: "Request a player to teleport to you"
+    usage: "/tpahere <player>"
+    permission: "justplayer.tpa.here"
+  tpaall:
+    description: "Request all players to teleport to you"
+    usage: "/tpaall"
+    permission: "justplayer.tpa.all"

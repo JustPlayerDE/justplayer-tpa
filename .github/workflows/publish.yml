@@ -1,0 +1,35 @@
+name: deploy
+
+on:
+  release:
+    types: [published]
+
+concurrency: deploy
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots package "-Drevision=${{ github.event.release.tag_name }}"
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          name: "JustPlayer TPA"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          #modrinth-id: TODO
+          #modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          #curseforge-id: TODO? do i even want to publish on curseforge? idk
+          #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: |
+            target/tpa-v*.jar

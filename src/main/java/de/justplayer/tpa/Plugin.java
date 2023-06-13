@@ -1,5 +1,6 @@
 package de.justplayer.tpa;
 
+import de.justplayer.tpa.listeners.PlayerLeaveListener;
 import de.justplayer.tpa.utils.CooldownManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +22,13 @@ public class Plugin extends JavaPlugin {
             new Metrics(this, 18743);
             getLogger().info("bStats enabled");
         }
+
+        // Register listeners
+        getServer().getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
+
+
+        // Register commands
+        // TODO
 
         getLogger().info("JustTPA initialized");
     }

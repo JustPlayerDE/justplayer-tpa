@@ -48,4 +48,12 @@ public class CooldownManager {
 
             coolDowns.get(uuid).remove(cooldownName);
         }
+
+        public void removeCooldowns(UUID uuid) {
+            if (!coolDowns.containsKey(uuid)) {
+                return;
+            }
+
+            coolDowns.remove(uuid);
+        }
 }

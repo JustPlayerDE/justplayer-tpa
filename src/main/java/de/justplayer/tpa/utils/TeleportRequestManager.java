@@ -36,8 +36,8 @@ public class TeleportRequestManager {
                 }
 
                 // Timeout check
-                if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout"))) {
-                    sender.sendMessage(prefix + "Your teleport request to " + request.getReceiver() + " has timed out");
+                if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout")) && !request.isAccepted()) {
+                    sender.sendMessage(prefix + "Your teleport request to " + receiver.getName() + " has timed out");
 
                     requests.remove(request); // cleanup
                     return;
@@ -138,10 +138,18 @@ public class TeleportRequestManager {
      * Remove all requests from or to a specific player
      */
     public void removeRequests(UUID playerId) {
-        requests.removeIf(request ->
-                request.getSender().equals(playerId)
-                        || request.getReceiver().equals(playerId)
-        );
+        List<Request> foundRequests = new ArrayList<>();
+
+        for (Request request : requests) {
+            if (request.getSender().equals(playerId) || request.getReceiver().equals(playerId)) {
+                foundRequests.add(request);
+            }
+        }
+
+        for (Request request : foundRequests) {
+            cancelRequest(request);
+            requests.remove(request);
+        }
     }
 
 

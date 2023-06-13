@@ -1,13 +1,13 @@
-name: deploy
+name: release
 
 on:
   release:
     types: [published]
 
-concurrency: deploy
+concurrency: release
 
 jobs:
-  build:
+  release:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:

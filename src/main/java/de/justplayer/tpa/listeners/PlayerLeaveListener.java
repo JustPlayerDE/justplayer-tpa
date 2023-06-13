@@ -5,9 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 public class PlayerLeaveListener implements Listener {
 
     private final Plugin plugin;
@@ -15,7 +12,6 @@ public class PlayerLeaveListener implements Listener {
     public PlayerLeaveListener(Plugin plugin) {
         this.plugin = plugin;
     }
-
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {

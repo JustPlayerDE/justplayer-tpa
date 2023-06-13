@@ -10,7 +10,6 @@ they can teleport to them. This plugin is very simple and easy to use.
 - `/tpdeny` - Denies a teleport request. (`justplayer.tpa.deny`)
 - `/tpacancel` - Cancels a teleport request. (`justplayer.tpa.cancel`)
 - `/tpahere <player>` - Sends a teleport request to the player to teleport to you. (`justplayer.tpa.here`)
-- `/tpaall` - Sends a teleport request to all online players. (`justplayer.tpa.all`)
 
 
 ## bStats

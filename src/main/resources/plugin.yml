@@ -25,7 +25,3 @@ commands:
     description: "Request a player to teleport to you"
     usage: "/tpahere <player>"
     permission: "justplayer.tpa.here"
-  tpaall:
-    description: "Request all players to teleport to you"
-    usage: "/tpaall"
-    permission: "justplayer.tpa.all"

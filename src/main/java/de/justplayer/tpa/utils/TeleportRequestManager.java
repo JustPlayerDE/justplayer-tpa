@@ -27,33 +27,24 @@ public class TeleportRequestManager {
             String prefix = plugin.getConfig().getString("messages.prefix");
 
             for (Request request : requests) {
+                Player sender = plugin.getServer().getPlayer(request.getSender());
+                Player receiver = plugin.getServer().getPlayer(request.getReceiver());
+
+                if (sender == null || receiver == null) {
+                    cancelRequest(request);
+                    return;
+                }
+
+                // Timeout check
                 if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout"))) {
+                    sender.sendMessage(prefix + "Your teleport request to " + request.getReceiver() + " has timed out");
+
                     requests.remove(request); // cleanup
                     return;
                 }
 
+                // Accept check
                 if (request.isAccepted()) {
-                    Player sender = plugin.getServer().getPlayer(request.getSender());
-                    Player receiver = plugin.getServer().getPlayer(request.getReceiver());
-
-                    if(sender == null && receiver == null) {
-                        // both players are offline or invalid
-                        requests.remove(request);
-                        return;
-                    }
-
-                    if (sender == null) {
-                        receiver.sendMessage(prefix + "The player you wanted to teleport to is offline");
-                        requests.remove(request);
-                        return;
-                    }
-
-                    if (receiver == null) {
-                        sender.sendMessage(prefix + "The player who wanted to teleport to you is offline");
-                        requests.remove(request);
-                        return;
-                    }
-
                     if (request.isHereRequest()) {
                         sender.teleport(receiver);
                         sender.sendMessage(prefix + "You have been teleported to " + receiver.getName());
@@ -151,6 +142,29 @@ public class TeleportRequestManager {
                 request.getSender().equals(playerId)
                         || request.getReceiver().equals(playerId)
         );
+    }
+
+
+    public void cancelRequest(Request request) {
+        Player sender = plugin.getServer().getPlayer(request.getSender());
+        Player receiver = plugin.getServer().getPlayer(request.getReceiver());
+        String prefix = plugin.getConfig().getString("messages.prefix");
+
+        if(sender == null && receiver == null) {
+            // both players are offline or invalid
+            requests.remove(request);
+            return;
+        }
+
+        if (sender != null) {
+            sender.sendMessage(prefix + "Teleport cancelled");
+        }
+
+        if (receiver != null && request.isAccepted()) {
+            receiver.sendMessage(prefix + "Teleport cancelled");
+        }
+
+        requests.remove(request);
     }
 
 }

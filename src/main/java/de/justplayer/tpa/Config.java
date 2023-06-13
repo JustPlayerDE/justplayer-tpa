@@ -17,7 +17,7 @@ public class Config {
 
         config.addDefault("bStats.enabled", true);
 
-        config.addDefault("messages.prefix", "&8[&6JustTPA&8] &7");
+        config.addDefault("messages.prefix", "§8[§6JustTPA§8] §7");
         // TODO: Add more messages
 
         config.options().copyDefaults(true);

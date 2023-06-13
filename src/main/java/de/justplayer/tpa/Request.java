@@ -1,0 +1,47 @@
+package de.justplayer.tpa;
+
+import java.util.UUID;
+
+public class Request {
+    private final UUID sender;
+    private final UUID receiver;
+    private final long timestamp;
+
+    private final boolean isHereRequest;
+    private boolean isAccepted = false;
+
+    public Request(UUID sender, UUID receiver, long timestamp, boolean isHereRequest) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.timestamp = timestamp;
+        this.isHereRequest = isHereRequest;
+    }
+
+    public UUID getSender() {
+        return sender;
+    }
+
+    public UUID getReceiver() {
+        return receiver;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public boolean isHereRequest() {
+        return isHereRequest;
+    }
+
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    public void setAccepted(boolean isAccepted) {
+        this.isAccepted = isAccepted;
+    }
+
+    public boolean isTimedOut(long timeOut) {
+        return System.currentTimeMillis() - timestamp > timeOut * 1000L;
+    }
+}

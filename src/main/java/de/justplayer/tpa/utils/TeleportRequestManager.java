@@ -1,8 +1,9 @@
 package de.justplayer.tpa.utils;
 
 import de.justplayer.tpa.Plugin;
+import de.justplayer.tpa.Request;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class TeleportRequestManager {
 
         this.scheduler = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             String prefix = plugin.getConfig().getString("messages.prefix");
-            List<Request> requestList = getRequests();
+            List<Request> requestList = new ArrayList<>(requests); // copy to avoid concurrent modification
 
             for (Request request : requestList) {
                 Player sender = plugin.getServer().getPlayer(request.getSender());
@@ -49,15 +50,21 @@ public class TeleportRequestManager {
 
                 // Accept check
                 if (request.isAccepted()) {
+                    Player teleportPlayer = request.isHereRequest() ? sender : receiver;
                     if (request.isHereRequest()) {
-                        sender.teleport(receiver);
                         sender.sendMessage(prefix + "You have been teleported to " + receiver.getName());
                         receiver.sendMessage(prefix + sender.getName() + " has been teleported to you");
                     } else {
-                        receiver.teleport(sender);
                         sender.sendMessage(prefix + receiver.getName() + " has been teleported to you");
                         receiver.sendMessage(prefix + "You have been teleported to " + sender.getName());
                     }
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            teleportPlayer.teleport(request.isHereRequest() ? receiver : sender);
+                        }
+                    }.runTask(plugin);
 
                     requests.remove(request);
                 }
@@ -156,13 +163,16 @@ public class TeleportRequestManager {
         }
     }
 
+    public void acceptRequest(Request request) {
+        request.setAccepted(true);
+    }
 
     public void cancelRequest(Request request, String senderReason, String receiverReason) {
         Player sender = plugin.getServer().getPlayer(request.getSender());
         Player receiver = plugin.getServer().getPlayer(request.getReceiver());
         String prefix = plugin.getConfig().getString("messages.prefix");
 
-        if(sender == null && receiver == null) {
+        if (sender == null && receiver == null) {
             // both players are offline or invalid
             requests.remove(request);
             return;
@@ -187,49 +197,4 @@ public class TeleportRequestManager {
         cancelRequest(request, "Teleport cancelled");
     }
 
-}
-
-
-class Request {
-    private final UUID sender;
-    private final UUID receiver;
-    private final long timestamp;
-
-    private final boolean isHereRequest;
-    private boolean isAccepted = false;
-
-    public Request(UUID sender, UUID receiver, long timestamp, boolean isHereRequest) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.timestamp = timestamp;
-        this.isHereRequest = isHereRequest;
-    }
-
-    public UUID getSender() {
-        return sender;
-    }
-
-    public UUID getReceiver() {
-        return receiver;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public boolean isHereRequest() {
-        return isHereRequest;
-    }
-
-    public boolean isAccepted() {
-        return isAccepted;
-    }
-
-    public void setAccepted(boolean isAccepted) {
-        this.isAccepted = isAccepted;
-    }
-
-    public boolean isTimedOut(long timeOut) {
-        return System.currentTimeMillis() - timestamp > timeOut * 1000L;
-    }
 }

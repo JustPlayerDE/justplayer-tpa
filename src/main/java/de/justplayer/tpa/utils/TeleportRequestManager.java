@@ -25,22 +25,26 @@ public class TeleportRequestManager {
 
         this.scheduler = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             String prefix = plugin.getConfig().getString("messages.prefix");
+            List<Request> requestList = getRequests();
 
-            for (Request request : requests) {
+            for (Request request : requestList) {
                 Player sender = plugin.getServer().getPlayer(request.getSender());
                 Player receiver = plugin.getServer().getPlayer(request.getReceiver());
 
                 if (sender == null || receiver == null) {
                     cancelRequest(request);
-                    return;
+                    continue;
                 }
 
                 // Timeout check
                 if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout")) && !request.isAccepted()) {
-                    sender.sendMessage(prefix + "Your teleport request to " + receiver.getName() + " has timed out");
+                    cancelRequest(
+                            request,
+                            "Your teleport request to " + receiver.getName() + " has timed out",
+                            "The teleport request from " + sender.getName() + " has timed out"
+                    );
 
-                    requests.remove(request); // cleanup
-                    return;
+                    continue;
                 }
 
                 // Accept check
@@ -153,7 +157,7 @@ public class TeleportRequestManager {
     }
 
 
-    public void cancelRequest(Request request) {
+    public void cancelRequest(Request request, String senderReason, String receiverReason) {
         Player sender = plugin.getServer().getPlayer(request.getSender());
         Player receiver = plugin.getServer().getPlayer(request.getReceiver());
         String prefix = plugin.getConfig().getString("messages.prefix");
@@ -165,14 +169,22 @@ public class TeleportRequestManager {
         }
 
         if (sender != null) {
-            sender.sendMessage(prefix + "Teleport cancelled");
+            sender.sendMessage(prefix + senderReason);
         }
 
         if (receiver != null && request.isAccepted()) {
-            receiver.sendMessage(prefix + "Teleport cancelled");
+            receiver.sendMessage(prefix + receiverReason);
         }
 
         requests.remove(request);
+    }
+
+    public void cancelRequest(Request request, String reason) {
+        cancelRequest(request, reason, reason);
+    }
+
+    public void cancelRequest(Request request) {
+        cancelRequest(request, "Teleport cancelled");
     }
 
 }

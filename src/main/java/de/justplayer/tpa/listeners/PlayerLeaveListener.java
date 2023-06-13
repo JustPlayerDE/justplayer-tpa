@@ -19,5 +19,8 @@ public class PlayerLeaveListener implements Listener {
         // But I don't think that's a big problem
         // Memory footprint is a bit more important than making sure that they can never bypass the cooldown
         this.plugin.cooldownManager.removeCooldowns(event.getPlayer().getUniqueId());
+
+        // Remove all pending requests
+        this.plugin.teleportRequestManager.removeRequests(event.getPlayer().getUniqueId());
     }
 }

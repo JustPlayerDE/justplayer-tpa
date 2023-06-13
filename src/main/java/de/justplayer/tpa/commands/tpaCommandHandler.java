@@ -52,12 +52,12 @@ public class tpaCommandHandler implements CommandExecutor {
             return true;
         }
 
-        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpa", plugin.config.getInt("tpa.cooldowns.tpa"));
-
         if(plugin.teleportRequestManager.getRequestByPlayer(player.getUniqueId()) != null) {
             player.sendMessage(plugin.config.getString("messages.prefix") + "You already have a pending request");
             return true;
         }
+
+        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpa", plugin.config.getInt("tpa.cooldowns.tpa"));
 
         plugin.teleportRequestManager.createRequest(
                 player.getUniqueId(),

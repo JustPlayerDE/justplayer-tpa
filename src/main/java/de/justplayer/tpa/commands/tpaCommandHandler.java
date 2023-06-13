@@ -25,12 +25,7 @@ public class tpaCommandHandler implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 0) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "Usage: /tpa <player>");
-            return true;
-        }
-
-        if (args.length > 1) {
+        if (args.length != 1) {
             player.sendMessage(plugin.config.getString("messages.prefix") + "Usage: /tpa <player>");
             return true;
         }

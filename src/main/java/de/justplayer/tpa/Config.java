@@ -14,11 +14,6 @@ public class Config {
         config.addDefault("tpa.cooldowns.tpa", 60);
         // Time in seconds you have to wait before you can send another tpa here request
         config.addDefault("tpa.cooldowns.tpaHere", 60);
-        // Time in seconds you have to wait before you can send another teleport request to the same player
-        config.addDefault("tpa.cooldowns.tpaSamePlayer", 60);
-        // Time in seconds you have to wait before you can send another tpa here request to the same player
-        config.addDefault("tpa.cooldowns.tpaHereSamePlayer", 60);
-
 
         config.addDefault("bStats.enabled", true);
 

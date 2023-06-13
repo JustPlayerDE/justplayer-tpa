@@ -30,6 +30,8 @@ jobs:
 
           #curseforge-id: TODO? do i even want to publish on curseforge? idk
           #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-
+          loaders: |
+            spigot
+            paper
           files: |
             target/tpa-v*.jar

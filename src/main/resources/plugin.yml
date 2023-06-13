@@ -1,5 +1,5 @@
 name: "JustTPA"
-version: "1.0"
+version: ${project.version}
 main: "de.justplayer.tpa.Plugin"
 api-version: '1.19'
 author: "JustPlayer"

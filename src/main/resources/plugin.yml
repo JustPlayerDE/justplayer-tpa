@@ -25,3 +25,19 @@ commands:
     description: "Request a player to teleport to you"
     usage: "/tpahere <player>"
     permission: "justplayer.tpa.here"
+permissions:
+  justplayer.tpa.request:
+    description: "Allows a player to request a teleport"
+    default: true
+  justplayer.tpa.accept:
+    description: "Allows a player to accept a teleport request"
+    default: true
+  justplayer.tpa.deny:
+    description: "Allows a player to deny a teleport request"
+    default: true
+  justplayer.tpa.cancel:
+    description: "Allows a player to cancel a teleport request"
+    default: true
+  justplayer.tpa.here:
+    description: "Allows a player to request a player to teleport to them"
+    default: true

@@ -50,7 +50,7 @@ public class TeleportRequestManager {
 
                 // Accept check
                 if (request.isAccepted()) {
-                    Player teleportPlayer = request.isHereRequest() ? sender : receiver;
+                    Player teleportPlayer = request.isHereRequest() ? receiver : sender;
                     if (request.isHereRequest()) {
                         sender.sendMessage(prefix + "You have been teleported to " + receiver.getName());
                         receiver.sendMessage(prefix + sender.getName() + " has been teleported to you");
@@ -62,7 +62,7 @@ public class TeleportRequestManager {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            teleportPlayer.teleport(request.isHereRequest() ? receiver : sender);
+                            teleportPlayer.teleport(request.isHereRequest() ? sender : receiver);
                         }
                     }.runTask(plugin);
 

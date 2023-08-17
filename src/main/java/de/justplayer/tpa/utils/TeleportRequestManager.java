@@ -51,7 +51,7 @@ public class TeleportRequestManager {
                 // Accept check
                 if (request.isAccepted()) {
                     Player teleportPlayer = request.isHereRequest() ? receiver : sender;
-                    if (request.isHereRequest()) {
+                    if (!request.isHereRequest()) {
                         sender.sendMessage(prefix + "You have been teleported to " + receiver.getName());
                         receiver.sendMessage(prefix + sender.getName() + " has been teleported to you");
                     } else {

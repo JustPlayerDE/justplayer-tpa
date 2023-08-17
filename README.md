@@ -11,6 +11,14 @@ The reason for why i even made this plugin is because no existing tpa plugin has
 
 Because of time I can only test it on the most recent version of minecraft paper.
 
+## Update Checker
+
+This plugin checks for updates on every startup, and if there is an update available it will send a message to the console.
+
+You can disable this in the config file if you don't want to be notified about updates.
+
+This will send a request to the modrinth api with the server software and minecraft version the server is running on. (e.g. paper 1.20.1)
+
 ## Commands
 
 - `/tpa <player>` - Sends a teleport request to the player. (`justplayer.tpa.request`)

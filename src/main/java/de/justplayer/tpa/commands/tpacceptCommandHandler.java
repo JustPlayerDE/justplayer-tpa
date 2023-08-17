@@ -33,7 +33,7 @@ public class tpacceptCommandHandler implements CommandExecutor {
         if (args.length == 0) {
             List<Request> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
 
-            if (requests.size() == 0) {
+            if (requests.isEmpty()) {
                 player.sendMessage(plugin.config.getString("messages.prefix") + "You have no pending requests");
                 return true;
             }

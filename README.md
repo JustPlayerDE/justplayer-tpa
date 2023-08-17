@@ -9,9 +9,7 @@ The reason for why i even made this plugin is because no existing tpa plugin has
 
 ## Supported versions
 
-As i don't have much time to work on this plugin, i will only officially support the latest version of Minecraft.
-
-Thanks to how spigot/paper works it may work on older versions, but i will not guarantee that it will work.
+Because of time I can only test it on the most recent version of minecraft paper.
 
 ## Commands
 

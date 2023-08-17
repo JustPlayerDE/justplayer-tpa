@@ -23,3 +23,5 @@ This plugin uses bStats to collect anonymous statistics, which helps determining
 which minecraft versions it is used on the most, and to which degree the different features are used.
 
 You can disable this by going to the `config.yml` file in the `bStats` folder of the plugin folder and changing `enabled` to `false`.
+
+You can view the statistics here: [https://bstats.org/plugin/bukkit/JustPlayer TPA/18743](https://bstats.org/plugin/bukkit/JustPlayer%20TPA/18743)

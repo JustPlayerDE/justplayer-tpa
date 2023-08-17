@@ -20,6 +20,9 @@ public class Config {
 
         config.addDefault("bStats.enabled", true);
 
+        // We use modrinth to check for updates
+        config.addDefault("check-for-updates", true);
+
         config.addDefault("messages.prefix", "§8[§6JustTPA§8] §7");
         // TODO: Add more messages
 

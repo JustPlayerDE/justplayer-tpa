@@ -1,0 +1,28 @@
+name: dev-build
+
+on:
+  push:
+
+concurrency: devbuild
+
+jobs:
+  release:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots package "-Drevision=dev-${{ github.ref_name }}-${GITHUB_SHA::6}"
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          name: "Development build"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            target/tpa-*.jar
+          fail-mode: skip

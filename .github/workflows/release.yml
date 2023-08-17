@@ -25,10 +25,10 @@ jobs:
           name: "JustPlayer TPA"
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-          modrinth-id: GM9AuKjX
-          modrinth-featured: true
-          modrinth-unfeature-mode: subset
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          #modrinth-id: GM9AuKjX
+          #modrinth-featured: true
+          #modrinth-unfeature-mode: subset
+          #modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
           #curseforge-id: TODO? do i even want to publish on curseforge? idk
           #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}

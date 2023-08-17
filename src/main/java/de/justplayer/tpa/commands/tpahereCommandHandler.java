@@ -52,7 +52,7 @@ public class tpahereCommandHandler implements CommandExecutor {
             return true;
         }
 
-        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpa", plugin.config.getInt("tpa.cooldowns.tpa"));
+        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpa", plugin.config.getInt("tpa.cooldowns.tpaHere"));
 
         plugin.teleportRequestManager.createRequest(
                 player.getUniqueId(),

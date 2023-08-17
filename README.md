@@ -7,6 +7,12 @@ I mainly made this plugin for myself, but i also wanted to share it with others.
 
 The reason for why i even made this plugin is because no existing tpa plugin has satisfied my needs.
 
+## Supported versions
+
+As i don't have much time to work on this plugin, i will only officially support the latest version of Minecraft.
+
+Thanks to how spigot/paper works it may work on older versions, but i will not guarantee that it will work.
+
 ## Commands
 
 - `/tpa <player>` - Sends a teleport request to the player. (`justplayer.tpa.request`)

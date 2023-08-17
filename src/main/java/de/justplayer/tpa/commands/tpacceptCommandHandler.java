@@ -15,6 +15,7 @@ public class tpacceptCommandHandler implements CommandExecutor {
     public tpacceptCommandHandler(Plugin plugin) {
         this.plugin = plugin;
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
         Player player;

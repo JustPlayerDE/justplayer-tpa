@@ -47,7 +47,7 @@ public class tpahereCommandHandler implements CommandExecutor {
             return true;
         }
 
-        if(plugin.teleportRequestManager.getRequestByPlayer(player.getUniqueId()) != null) {
+        if (plugin.teleportRequestManager.getRequestByPlayer(player.getUniqueId()) != null) {
             player.sendMessage(plugin.config.getString("messages.prefix") + "You already have a pending request");
             return true;
         }

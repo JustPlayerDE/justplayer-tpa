@@ -88,7 +88,7 @@ public class Plugin extends JavaPlugin {
 
                     if (!currentPluginVersion.equals(latestPluginVersion)) {
                         getLogger().info("A new version is available: " + latestPluginVersion);
-                        getLogger().info("Download it at: https://modrinth.com/plugin/justplayer-tpa");
+                        getLogger().info("Download it at: https://modrinth.com/plugin/justplayer-tpa/versions?l=" + serverSoftware + "&g=" + minecraftVersion);
                     }
 
                 } catch (Exception e) {

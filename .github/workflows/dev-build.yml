@@ -6,7 +6,7 @@ on:
 concurrency: devbuild
 
 jobs:
-  release:
+  build:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:

@@ -11,7 +11,7 @@ The reason for why i even made this plugin is because no existing tpa plugin has
 
 - `/tpa <player>` - Sends a teleport request to the player. (`justplayer.tpa.request`)
 - `/tpaccept [player]` - Accepts a teleport request, optionally accepts a player name to only accept requests from a specific player. (`justplayer.tpa.accept`)
-- ~~`/tpdeny` - Denies a teleport request. (`justplayer.tpa.deny`)~~
+- ~~`/tpadeny` - Denies a teleport request. (`justplayer.tpa.deny`)~~
 - ~~`/tpacancel` - Cancels a teleport request. (`justplayer.tpa.cancel`)~~
 - `/tpahere <player>` - Sends a teleport request to the player to teleport to you. (`justplayer.tpa.here`)
 

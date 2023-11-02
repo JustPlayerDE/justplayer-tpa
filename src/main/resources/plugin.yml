@@ -13,9 +13,9 @@ commands:
     description: "Accept a teleport request"
     usage: "/tpaccept"
     permission: "justplayer.tpa.accept"
-  tpdeny:
+  tpadeny:
     description: "Deny a teleport request"
-    usage: "/tpdeny"
+    usage: "/tpadeny"
     permission: "justplayer.tpa.deny"
   tpacancel:
     description: "Cancel a teleport request"

@@ -28,6 +28,12 @@ public class tpadenyCommandHandler implements CommandExecutor {
             return true;
         }
 
+        List<Request> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
+        if (requests.isEmpty()) {
+            player.sendMessage(plugin.config.getString("messages.prefix") + "You have no pending request");
+            return true;
+        }
+
         if(args.length > 0) {
             Player requestSender = plugin.getServer().getPlayer(args[0]);
 
@@ -45,12 +51,6 @@ public class tpadenyCommandHandler implements CommandExecutor {
 
             plugin.teleportRequestManager.cancelRequest(request, "Teleportation Denied by " + player.getName());
             player.sendMessage(plugin.config.getString("messages.prefix") + "You have denied the Teleportation request from " + requestSender.getName());
-            return true;
-        }
-
-        List<Request> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
-        if (requests.isEmpty()) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "You have no pending request");
             return true;
         }
 

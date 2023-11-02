@@ -66,7 +66,7 @@ public class tpacceptCommandHandler implements CommandExecutor {
             return true;
         }
 
-        Request request = plugin.teleportRequestManager.getRequestByPlayer(requestSender.getUniqueId());
+        Request request = plugin.teleportRequestManager.getRequest(requestSender.getUniqueId(), player.getUniqueId());
 
         if (request == null) {
             player.sendMessage(plugin.config.getString("messages.prefix") + "No pending request from that player");

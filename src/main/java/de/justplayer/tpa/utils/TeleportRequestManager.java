@@ -182,7 +182,7 @@ public class TeleportRequestManager {
             sender.sendMessage(prefix + senderReason);
         }
 
-        if (receiver != null && request.isAccepted()) {
+        if (receiver != null && !receiverReason.isEmpty()) {
             receiver.sendMessage(prefix + receiverReason);
         }
 

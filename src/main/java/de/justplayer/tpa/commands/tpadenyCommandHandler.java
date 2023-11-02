@@ -43,7 +43,7 @@ public class tpadenyCommandHandler implements CommandExecutor {
                 return true;
             }
 
-            plugin.teleportRequestManager.cancelRequest(request, "Teleportation Denied by player");
+            plugin.teleportRequestManager.cancelRequest(request, "Teleportation Denied by " + player.getName());
             player.sendMessage(plugin.config.getString("messages.prefix") + "You have denied the Teleportation request from " + requestSender.getName());
             return true;
         }
@@ -57,7 +57,7 @@ public class tpadenyCommandHandler implements CommandExecutor {
         Request request = requests.get(0);
         Player requestSender = plugin.getServer().getPlayer(request.getSender());
 
-        plugin.teleportRequestManager.cancelRequest(requests.get(0), "Teleportation Denied by player");
+        plugin.teleportRequestManager.cancelRequest(requests.get(0), "Teleportation Denied by " + player.getName());
         player.sendMessage(plugin.config.getString("messages.prefix") + "You have denied the Teleportation request from " + (requestSender != null ? requestSender.getName() : "Unknown Player"));
 
         return true;

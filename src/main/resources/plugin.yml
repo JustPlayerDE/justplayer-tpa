@@ -10,12 +10,12 @@ commands:
     usage: "/tpa <player>"
     permission: "justplayer.tpa.request"
   tpaccept:
-    description: "Accept a teleport request"
-    usage: "/tpaccept"
+    description: "Accept a teleport request, optionally provide a player name to only accept from that player."
+    usage: "/tpaccept [player]"
     permission: "justplayer.tpa.accept"
   tpadeny:
-    description: "Deny a teleport request"
-    usage: "/tpadeny"
+    description: "Deny a teleport request, optionally provide a player name to only deny from that player."
+    usage: "/tpadeny [player]"
     permission: "justplayer.tpa.deny"
   tpacancel:
     description: "Cancel a teleport request"

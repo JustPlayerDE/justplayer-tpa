@@ -65,7 +65,7 @@ public class tpahereCommandHandler implements CommandExecutor {
         target.sendMessage(plugin.config.getString("messages.prefix") + "This request will expire in " + plugin.config.getInt("tpa.timeout") + " seconds");
         target.sendMessage(plugin.config.getString("messages.prefix") + "Warning: If you accept this request, you will be teleported to " + player.getName());
         target.sendMessage(plugin.config.getString("messages.prefix") + "Type /tpaccept to accept the request");
-        target.sendMessage(plugin.config.getString("messages.prefix") + "Type /tpdeny to deny the request");
+        target.sendMessage(plugin.config.getString("messages.prefix") + "Type /tpadeny to deny the request");
 
         return true;
     }

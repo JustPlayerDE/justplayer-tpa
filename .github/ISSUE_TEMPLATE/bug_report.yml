@@ -1,0 +1,67 @@
+name: Bug report
+description: Template for bug reports
+title: 'Issue: '
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Please make sure you are using the latest version of my plugin.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: It did not work ¯\_(ツ)_/¯
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: It should just work ¯\_(ツ)_/¯
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error
+    validations:
+      required: true
+  - type: input
+    id: server_version
+    attributes:
+      label: Server Version
+      description: You can use /version on your server to get your server version.
+      placeholder: 'git-Paper-129 (MC: 1.20.1)'
+    validations:
+      required: true
+  - type: input
+    id: plugin_version
+    attributes:
+      label: Plugin Version
+      description: Please provide the plugin version you used when this error happened.
+    validations:
+      required: true
+  - type: textarea
+    id: other
+    attributes:
+      label: Additional context
+      description: >-
+        Please provide more informations here if you think they help me fix the
+        issue.
+  - type: checkboxes
+    id: agree
+    attributes:
+      label: Verifying nothing is missing
+      options:
+        - label: I did search for a similar issue first
+          required: false
+        - label: I verified that my configuration had no errors
+          required: false
+  - type: markdown
+    attributes:
+      value: >-
+        This template was generated with [Issue Forms
+        Creator](https://issue-forms-creator.netlify.app)

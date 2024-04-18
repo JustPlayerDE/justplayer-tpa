@@ -17,12 +17,12 @@ import java.net.http.HttpResponse;
 import java.util.Objects;
 
 public class Plugin extends JavaPlugin {
-    public FileConfiguration config;
+    public Config config;
     public CooldownManager cooldownManager;
     public TeleportRequestManager teleportRequestManager;
 
     public Plugin() {
-        config = new Config(this).getConfig();
+        config = new Config(this);
         cooldownManager = new CooldownManager();
         teleportRequestManager = new TeleportRequestManager(this);
     }

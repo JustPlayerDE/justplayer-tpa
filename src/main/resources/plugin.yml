@@ -25,6 +25,10 @@ commands:
     description: "Request a player to teleport to you"
     usage: "/tpahere <player>"
     permission: "justplayer.tpa.here"
+  tpareload:
+    description: "Reload plugin configuration"
+    usage: "/tpareload"
+    permission: "justplayer.tpa.reload"
 permissions:
   justplayer.tpa.request:
     description: "Allows a player to request a teleport"
@@ -41,3 +45,6 @@ permissions:
   justplayer.tpa.here:
     description: "Allows a player to request a player to teleport to them"
     default: true
+  justplayer.tpa.reload:
+    description: "Allows a player to reload the plugin configuration"
+    default: op

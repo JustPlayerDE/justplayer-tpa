@@ -8,7 +8,6 @@ import de.justplayer.tpa.listeners.PlayerLeaveListener;
 import de.justplayer.tpa.utils.CooldownManager;
 import de.justplayer.tpa.utils.TeleportRequestManager;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.http.HttpClient;
@@ -39,6 +38,7 @@ public class Plugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("tpaccept")).setExecutor(new tpacceptCommandHandler(this));
         Objects.requireNonNull(getCommand("tpadeny")).setExecutor(new tpadenyCommandHandler(this));
         Objects.requireNonNull(getCommand("tpacancel")).setExecutor(new tpacancelCommandHandler(this));
+        Objects.requireNonNull(getCommand("tpareload")).setExecutor(new tpareloadCommandHandler(this));
         // Start the teleport request manager scheduler
         teleportRequestManager.start();
 

@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.Objects;
 
 public class Plugin extends JavaPlugin {
@@ -105,5 +106,28 @@ public class Plugin extends JavaPlugin {
         getLogger().info("JustTPA disabled");
 
         teleportRequestManager.stop();
+    }
+
+    /**
+     * Returns the translation for the given key
+     * @param key
+     * @return
+     */
+    public String translate(String key) {
+        // In case the translation does not exists, we simply return the key to notice this error.
+        return this.config.getString(key, key);
+    }
+
+    /**
+     * Returns the translation for the given key and replaces all %key% with value inside the string
+     */
+    public String translate(String key, Map<String, String> placeholders) {
+        String output = this.config.getString(key);
+
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            output = output.replaceAll( "%" + entry.getKey() + "%", entry.getValue());
+        }
+
+        return output;
     }
 }

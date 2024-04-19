@@ -31,6 +31,7 @@ public class Config {
 
         config.options().copyDefaults(true);
         this.plugin.saveConfig();
+        this.plugin.reloadConfig();
     }
 
     public String getString(String key) {

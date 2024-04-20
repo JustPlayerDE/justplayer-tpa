@@ -8,6 +8,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class TeleportRequestManager {
@@ -25,7 +26,7 @@ public class TeleportRequestManager {
         }
 
         this.scheduler = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            String prefix = plugin.getConfig().getString("messages.prefix");
+            String prefix = plugin.translate("messages.prefix");
             List<Request> requestList = new ArrayList<>(requests); // copy to avoid concurrent modification
 
             for (Request request : requestList) {
@@ -41,8 +42,10 @@ public class TeleportRequestManager {
                 if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout")) && !request.isAccepted()) {
                     cancelRequest(
                             request,
-                            "Your teleport request to " + receiver.getName() + " has timed out",
-                            "The teleport request from " + sender.getName() + " has timed out"
+                            "messages.request.timeout-to",
+                            Map.of("playername", receiver.getName()),
+                            "messages.request.timeout-from",
+                            Map.of("playername", sender.getName())
                     );
 
                     continue;
@@ -52,11 +55,11 @@ public class TeleportRequestManager {
                 if (request.isAccepted()) {
                     Player teleportPlayer = request.isHereRequest() ? receiver : sender;
                     if (!request.isHereRequest()) {
-                        sender.sendMessage(prefix + "You have been teleported to " + receiver.getName());
-                        receiver.sendMessage(prefix + sender.getName() + " has been teleported to you");
+                        sender.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", receiver.getName())));
+                        receiver.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", sender.getName())));
                     } else {
-                        sender.sendMessage(prefix + receiver.getName() + " has been teleported to you");
-                        receiver.sendMessage(prefix + "You have been teleported to " + sender.getName());
+                        sender.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", receiver.getName())));
+                        receiver.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", sender.getName())));
                     }
 
                     new BukkitRunnable() {
@@ -170,7 +173,7 @@ public class TeleportRequestManager {
     public void cancelRequest(Request request, String senderReason, String receiverReason) {
         Player sender = plugin.getServer().getPlayer(request.getSender());
         Player receiver = plugin.getServer().getPlayer(request.getReceiver());
-        String prefix = plugin.getConfig().getString("messages.prefix");
+        String prefix = plugin.translate("messages.prefix");
 
         if (sender == null && receiver == null) {
             // both players are offline or invalid
@@ -179,14 +182,27 @@ public class TeleportRequestManager {
         }
 
         if (sender != null) {
-            sender.sendMessage(prefix + senderReason);
+            sender.sendMessage(prefix + plugin.translate(senderReason));
         }
 
         if (receiver != null && !receiverReason.isEmpty()) {
-            receiver.sendMessage(prefix + receiverReason);
+            receiver.sendMessage(prefix + plugin.translate(receiverReason));
         }
 
         requests.remove(request);
+    }
+
+    public void cancelRequest(Request request, String key, Map<String, String> placeholders)
+    {
+        cancelRequest(request, plugin.translate(key,placeholders));
+    }
+
+    public void cancelRequest(Request request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders)
+    {
+        cancelRequest(request,
+                plugin.translate(senderKey,senderPlaceholders),
+                plugin.translate(receiverKey,receiverPlaceholders)
+        );
     }
 
     public void cancelRequest(Request request, String reason) {
@@ -194,7 +210,7 @@ public class TeleportRequestManager {
     }
 
     public void cancelRequest(Request request) {
-        cancelRequest(request, "Teleport cancelled");
+        cancelRequest(request, "messages.request.canceled");
     }
 
 }

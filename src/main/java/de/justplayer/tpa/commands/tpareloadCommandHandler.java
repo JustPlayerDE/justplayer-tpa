@@ -16,7 +16,7 @@ public class tpareloadCommandHandler implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
         this.plugin.reloadConfig();
-        sender.sendMessage(plugin.config.getString("messages.prefix") + "Configuration has been reloaded.");
+        sender.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.reloaded"));
         return true;
     }
 }

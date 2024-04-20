@@ -6,6 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+
 public class tpaCommandHandler implements CommandExecutor {
 
     private final Plugin plugin;
@@ -21,34 +23,37 @@ public class tpaCommandHandler implements CommandExecutor {
         if (sender instanceof Player) {
             player = (Player) sender;
         } else {
-            sender.sendMessage(plugin.config.getString("messages.prefix") + "You must be a player to use this command");
+            sender.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.player-required"));
             return true;
         }
 
         if (args.length != 1) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "Usage: /tpa <player>");
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.usages.tpa"));
             return true;
         }
 
         Player target = plugin.getServer().getPlayer(args[0]);
 
         if (target == null) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "Player not found");
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.player-not-found"));
             return true;
         }
 
         if (target == player) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "You can't send a teleport request to yourself");
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.player-self-request"));
             return true;
         }
 
         if (plugin.cooldownManager.isOnCooldown(player.getUniqueId(), "tpa")) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "You have to wait " + plugin.cooldownManager.getCooldown(player.getUniqueId(), "tpa") + " seconds before you can send another teleport request");
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.cooldown",
+                    Map.of("seconds", Integer.toString(plugin.cooldownManager.getCooldown(player.getUniqueId(), "tpa")))
+            ));
+
             return true;
         }
 
         if (plugin.teleportRequestManager.getRequestByPlayer(player.getUniqueId()) != null) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "You already have a pending request");
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-pending"));
             return true;
         }
 
@@ -60,11 +65,22 @@ public class tpaCommandHandler implements CommandExecutor {
                 false
         );
 
-        player.sendMessage(plugin.config.getString("messages.prefix") + "Teleport request sent to " + target.getName() + ", they have " + plugin.config.getInt("tpa.timeout") + " seconds to accept it");
-        target.sendMessage(plugin.config.getString("messages.prefix") + "You have received a teleport request from " + player.getName());
-        target.sendMessage(plugin.config.getString("messages.prefix") + "This request will expire in " + plugin.config.getInt("tpa.timeout") + " seconds");
-        target.sendMessage(plugin.config.getString("messages.prefix") + "Type /tpaccept to accept the request");
-        target.sendMessage(plugin.config.getString("messages.prefix") + "Type /tpadeny to deny the request");
+        player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.sent",
+                Map.of(
+                        "playername", target.getName(),
+                        "seconds", plugin.config.getString("tpa.timeout")
+                )
+        ));
+
+        target.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.received",
+                Map.of(
+                        "playername", player.getName(),
+                        "seconds", plugin.config.getString("tpa.timeout")
+                )
+        ));
+
+        target.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.accept"));
+        target.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.deny"));
 
 
         return true;

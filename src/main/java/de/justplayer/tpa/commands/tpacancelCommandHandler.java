@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+
 public class tpacancelCommandHandler implements CommandExecutor {
     private final Plugin plugin;
 
@@ -19,20 +21,20 @@ public class tpacancelCommandHandler implements CommandExecutor {
         if (sender instanceof Player) {
             player = (Player) sender;
         } else {
-            sender.sendMessage(plugin.config.getString("messages.prefix") + "You must be a player to use this command");
+            sender.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.player-required"));
             return true;
         }
 
         Request request = plugin.teleportRequestManager.getRequestByPlayer(player.getUniqueId());
 
         if (request == null) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "You have no pending request");
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found"));
             return true;
         }
 
         plugin.teleportRequestManager.cancelRequest(request,
-                "Teleportation Canceled",
-                "Teleportation Canceled by " + player.getName()
+                plugin.translate("messages.request.canceled"),
+                plugin.translate("messages.request.canceled-by", Map.of("playername", player.getName()))
         );
 
         return true;

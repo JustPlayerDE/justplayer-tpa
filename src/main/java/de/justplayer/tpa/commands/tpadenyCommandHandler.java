@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 public class tpadenyCommandHandler implements CommandExecutor {
     private final Plugin plugin;
@@ -24,13 +25,13 @@ public class tpadenyCommandHandler implements CommandExecutor {
         if (sender instanceof Player) {
             player = (Player) sender;
         } else {
-            sender.sendMessage(plugin.config.getString("messages.prefix") + "You must be a player to use this command");
+            sender.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.player-required"));
             return true;
         }
 
         List<Request> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
         if (requests.isEmpty()) {
-            player.sendMessage(plugin.config.getString("messages.prefix") + "You have no pending request");
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found"));
             return true;
         }
 
@@ -38,27 +39,36 @@ public class tpadenyCommandHandler implements CommandExecutor {
             Player requestSender = plugin.getServer().getPlayer(args[0]);
 
             if (requestSender == null) {
-                player.sendMessage(plugin.config.getString("messages.prefix") + "Player not found");
+                player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.player-not-found"));
                 return true;
             }
 
             Request request = plugin.teleportRequestManager.getRequest(requestSender.getUniqueId(), player.getUniqueId());
 
             if(request == null) {
-                player.sendMessage(plugin.config.getString("messages.prefix") + "You have no pending request from that player");
+                player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found-by",
+                        Map.of("playername", args[0])
+                ));
                 return true;
             }
 
-            plugin.teleportRequestManager.cancelRequest(request, "Teleportation Denied by " + player.getName());
-            player.sendMessage(plugin.config.getString("messages.prefix") + "You have denied the Teleportation request from " + requestSender.getName());
+            plugin.teleportRequestManager.cancelRequest(request,"messages.request.denied-by", Map.of("playername", player.getName()));
+
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.denied",
+                    Map.of("playername", player.getName())
+            ));
+
             return true;
         }
 
         Request request = requests.get(0);
         Player requestSender = plugin.getServer().getPlayer(request.getSender());
+        String senderName = (requestSender != null ? requestSender.getName() : "Unknown Player");
 
-        plugin.teleportRequestManager.cancelRequest(requests.get(0), "Teleportation Denied by " + player.getName());
-        player.sendMessage(plugin.config.getString("messages.prefix") + "You have denied the Teleportation request from " + (requestSender != null ? requestSender.getName() : "Unknown Player"));
+        plugin.teleportRequestManager.cancelRequest(requests.get(0),"messages.request.denied-by", Map.of("playername", player.getName()));
+        player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.denied",
+                Map.of("playername", senderName)
+        ));
 
         return true;
     }

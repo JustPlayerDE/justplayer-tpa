@@ -45,7 +45,34 @@ public class Config {
         ));
 
         config.addDefault("messages.prefix", "§8[§6JustTPA§8] §7");
-        // TODO: Add more messages
+        config.addDefault("messages.reloaded", "Configuration has been reloaded.");
+        config.addDefault("messages.usages.tpa", "Usage: /tpa <player>");
+        config.addDefault("messages.usages.tpahere", "Usage: /tpahere <player>");
+        config.addDefault("messages.usages.tpaccept", "Usage: /tpaccept to accept the last teleport request, or /tpaccept <player> to accept a specific teleport request");
+
+        config.addDefault("messages.errors.player-required", "You must be a player to use this command.");
+        config.addDefault("messages.errors.player-not-found", "Player not found.");
+        config.addDefault("messages.errors.player-self-request", "You can't send a teleport request to yourself.");
+        config.addDefault("messages.errors.request-pending", "You already have a pending request.");
+        config.addDefault("messages.errors.request-not-found", "You have no pending request.");
+        config.addDefault("messages.errors.request-not-found-by", "You have no pending request from %playername%.");
+        config.addDefault("messages.errors.cooldown", "You have to wait %seconds% seconds before you can send another teleport request.");
+
+        config.addDefault("messages.request.sent", "Teleport request sent to %playername% they have %seconds% seconds to accept it.");
+        config.addDefault("messages.request.received", "You have received a teleport request from %playername% which expires in %seconds% seconds.");
+        config.addDefault("messages.request.accept", "Type /tpaccept to accept the request.");
+        config.addDefault("messages.request.deny", "Type /tpadeny to deny the request.");
+        config.addDefault("messages.request.denied-by", "Teleportation Denied by %playername%.");
+        config.addDefault("messages.request.denied", "You have denied the Teleportation request from %playername%.");
+        config.addDefault("messages.request.warning-tpa-here", "Warning: if you accept this request, you will be teleported to %playername%.");
+        config.addDefault("messages.request.canceled", "Teleportation Canceled.");
+        config.addDefault("messages.request.canceled-by", "Teleportation Canceled by %playername%.");
+        config.addDefault("messages.request.accepted", "You accepted the teleport request from %playername%.");
+        config.addDefault("messages.request.accepted-by", "Your teleport request has been accepted by %playername%.");
+        config.addDefault("messages.request.timeout-to", "Your teleport request to %playername% has timed out.");
+        config.addDefault("messages.request.timeout-from", "Your teleport request from %playername% has timed out.");
+        config.addDefault("messages.request.teleported-to", "You have been teleported to %playername%.");
+        config.addDefault("messages.request.teleported-from", "%playername% has been teleported to you.");
 
         config.options().copyDefaults(true);
         this.plugin.saveConfig();

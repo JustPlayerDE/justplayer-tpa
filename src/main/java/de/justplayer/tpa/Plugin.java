@@ -110,11 +110,11 @@ public class Plugin extends JavaPlugin {
 
     /**
      * Returns the translation for the given key
+     * Will return the key if there is no translation in the config
      * @param key
      * @return
      */
     public String translate(String key) {
-        // In case the translation does not exists, we simply return the key to notice this error.
         return this.config.getString(key, key);
     }
 
@@ -122,7 +122,12 @@ public class Plugin extends JavaPlugin {
      * Returns the translation for the given key and replaces all %key% with value inside the string
      */
     public String translate(String key, Map<String, String> placeholders) {
-        String output = this.config.getString(key);
+        String output = this.translate(key);
+
+        if(output.equals(key)) {
+            // We got a missing key, no need to replace placeholders.
+            return output;
+        }
 
         for (Map.Entry<String, String> entry : placeholders.entrySet()) {
             output = output.replaceAll( "%" + entry.getKey() + "%", entry.getValue());

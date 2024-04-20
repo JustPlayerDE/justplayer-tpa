@@ -44,7 +44,7 @@ public class tpahereCommandHandler implements CommandExecutor {
             return true;
         }
 
-        if (plugin.cooldownManager.isOnCooldown(player.getUniqueId(), "tpa")) {
+        if (plugin.cooldownManager.isOnCooldown(player.getUniqueId(), "tpaHere")) {
             player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.cooldown",
                     Map.of("seconds", Integer.toString(plugin.cooldownManager.getCooldown(player.getUniqueId(), "tpa")))
             ));
@@ -57,7 +57,7 @@ public class tpahereCommandHandler implements CommandExecutor {
             return true;
         }
 
-        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpa", plugin.config.getInt("tpa.cooldowns.tpaHere"));
+        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpaHere", plugin.config.getInt("tpa.cooldowns.tpaHere"));
 
         plugin.teleportRequestManager.createRequest(
                 player.getUniqueId(),

@@ -20,7 +20,11 @@ The reason for why i even made this plugin is because no existing tpa plugin has
 
 ## Supported versions
 
-Because of time I can only test it on the most recent version of minecraft paper.
+I can only support the latest minecraft spigot and paper.
+
+The plugin may work on prior versions, but I only have time to test on the most recent minor (x.x.y) of a minecraft major (x.y) version.
+
+Currently used API is 1.19
 
 ## Update Checker
 

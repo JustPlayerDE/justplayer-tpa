@@ -40,6 +40,11 @@ public class Config {
                 "Enable bStats for this plugin"
         ));
 
+        config.addDefault("tpa.verbose", false);
+        config.setComments("tpa.verbose", List.of(
+                "Makes the plugin spam the console with maybe useful information (more verbose)"
+        ));
+
         // We use modrinth to check for updates
         config.addDefault("check-for-updates", true);
         config.setComments("check-for-updates", List.of(

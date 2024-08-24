@@ -15,6 +15,7 @@ public class PlayerLeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
+        plugin.log("Removing cooldowns and requests for " + event.getPlayer().getUniqueId() + " because the player left the server.", "Debug");
         // May be exploitable if the player leaves and rejoins the server before the cooldown ends
         // But I don't think that's a big problem
         // Memory footprint is a bit more important than making sure that they can never bypass the cooldown

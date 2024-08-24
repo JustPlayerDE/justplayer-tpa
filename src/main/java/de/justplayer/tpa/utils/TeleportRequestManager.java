@@ -22,6 +22,7 @@ public class TeleportRequestManager {
 
     public void start() {
         if (this.scheduler != null) {
+            plugin.log("Teleport Scheduler has been started while one is already started.", "Debug");
             this.scheduler.cancel();
         }
 
@@ -37,6 +38,7 @@ public class TeleportRequestManager {
                     int timeout = plugin.getConfig().getInt("tpa.return-timeout");
                     if (timeout > 0 && request.isTimedOut(timeout)) {
                         // Silently remove it, the player doesn't care about returns as much and if so they already used it.
+                        plugin.log("Return request for " + playerId + " has been timed out", "Debug");
                         returnRequests.remove(playerId);
                     }
 
@@ -65,16 +67,20 @@ public class TeleportRequestManager {
                 Player receiver = plugin.getServer().getPlayer(request.getReceiver());
 
                 if (sender == null || receiver == null) {
+
+                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been removed because either sender or receiver is gone.", "Debug");
                     cancelRequest(request);
                     continue;
                 }
 
                 if(ignoredPlayersForThisRun.contains(request.getSender())) {
+                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been ignored for now because sender has requested a return before.", "Debug");
                     continue;
                 }
 
                 // Timeout check
                 if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout")) && !request.isAccepted()) {
+                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been timed out.", "Debug");
                     cancelRequest(
                             request,
                             "messages.request.timeout-to",
@@ -88,6 +94,7 @@ public class TeleportRequestManager {
 
                 // Accept check
                 if (request.isAccepted()) {
+                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been accepted.", "Debug");
                     Player teleportPlayer = request.isHereRequest() ? receiver : sender;
                     if (!request.isHereRequest()) {
                         sender.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", receiver.getName())));
@@ -118,6 +125,7 @@ public class TeleportRequestManager {
     }
 
     public void stop() {
+        plugin.log("Stopping teleport scheduler task.", "Debug");
         if (scheduler != null && !scheduler.isCancelled()) {
             scheduler.cancel();
         }

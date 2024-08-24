@@ -140,4 +140,21 @@ public class Plugin extends JavaPlugin {
 
         return output;
     }
+
+    public void log(String message, String prefix) {
+        if(prefix != null) {
+            if(Objects.equals(prefix, "Debug") && !config.getBoolean("tpa.verbose")) {
+                return;
+            }
+
+            getLogger().info("[" + prefix + "] " + message);
+        } else {
+            getLogger().info(message);
+        }
+    }
+
+    public void log(String message) {
+        this.log(message, "Debug");
+    }
+
 }

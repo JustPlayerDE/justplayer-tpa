@@ -54,7 +54,7 @@ public class Plugin extends JavaPlugin {
          * Check for updates using modrinth
          */
         if (config.getBoolean("check-for-updates") && !getDescription().getVersion().contains("dev")) {
-            String minecraftVersion = getServer().getBukkitVersion().split("-")[0];
+            String minecraftVersion = getServer().getVersion().split("-")[0];
             String serverSoftware = getServer().getVersion().split("-")[1].split(" ")[0].toLowerCase();
             String currentPluginVersion = getDescription().getVersion();
 
@@ -64,7 +64,7 @@ public class Plugin extends JavaPlugin {
                 HttpClient client = HttpClient.newHttpClient();
 
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(java.net.URI.create("https://api.modrinth.com/v2/project/justplayer-tpa/version?game_versions=[%22" + minecraftVersion + "%22]&loaders=[%22" + serverSoftware + "%22]"))
+                        .uri(java.net.URI.create("https://api.modrinth.com/v2/project/justplayer-tpa/version?game_versions=" + minecraftVersion + "&loaders=" + serverSoftware))
                         .GET()
                         .header("User-Agent", "JustPlayerDE/justplayer-tpa/v" + currentPluginVersion + " (https://modrinth.com/plugin/justplayer-tpa justin.k@justplayer.de)")
                         .build();

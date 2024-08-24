@@ -40,10 +40,15 @@ public class Plugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("tpadeny")).setExecutor(new tpadenyCommandHandler(this));
         Objects.requireNonNull(getCommand("tpacancel")).setExecutor(new tpacancelCommandHandler(this));
         Objects.requireNonNull(getCommand("tpareload")).setExecutor(new tpareloadCommandHandler(this));
+        Objects.requireNonNull(getCommand("tpareturn")).setExecutor(new tpareturnCommandHandler(this));
         // Start the teleport request manager scheduler
         teleportRequestManager.start();
 
         getLogger().info("JustTPA initialized");
+
+        if(getDescription().getVersion().contains("dev")) {
+            getLogger().warning("Using Development version, plugin may be unstable. bStats and Update checks are disabled.");
+        }
 
         if (config.getBoolean("bStats.enabled") && !getDescription().getVersion().contains("dev")) {
             new Metrics(this, 18743);

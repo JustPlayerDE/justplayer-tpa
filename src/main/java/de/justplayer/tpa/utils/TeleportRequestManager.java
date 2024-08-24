@@ -2,18 +2,18 @@ package de.justplayer.tpa.utils;
 
 import de.justplayer.tpa.Plugin;
 import de.justplayer.tpa.Request;
+import de.justplayer.tpa.ReturnRequest;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TeleportRequestManager {
     private final Plugin plugin;
     private final List<Request> requests = new ArrayList<>();
+    private final HashMap<UUID, ReturnRequest> returnRequests = new HashMap<>();
     private BukkitTask scheduler;
 
     public TeleportRequestManager(Plugin plugin) {
@@ -27,14 +27,49 @@ public class TeleportRequestManager {
 
         this.scheduler = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             String prefix = plugin.translate("messages.prefix");
-            List<Request> requestList = new ArrayList<>(requests); // copy to avoid concurrent modification
+            List<Request> requestList = new ArrayList<>(requests);
+            HashMap<UUID, ReturnRequest> returnRequestMap = new HashMap<>(returnRequests);
+            List<UUID> ignoredPlayersForThisRun = new ArrayList<>();
 
+            returnRequestMap.forEach((UUID playerId, ReturnRequest request) -> {
+
+                if(!request.getRequested()) {
+                    int timeout = plugin.getConfig().getInt("tpa.return-timeout");
+                    if (timeout > 0 && request.isTimedOut(timeout)) {
+                        // Silently remove it, the player doesn't care about returns as much and if so they already used it.
+                        returnRequests.remove(playerId);
+                    }
+
+                    return;
+                }
+
+                returnRequests.remove(playerId);
+                ignoredPlayersForThisRun.add(playerId);
+                Player teleportPlayer = Bukkit.getPlayer(playerId);
+
+                if(teleportPlayer == null) {
+                    return;
+                }
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        teleportPlayer.teleport(request.getLocation());
+                    }
+                }.runTask(plugin);
+            });
+
+            // Then normal requests
             for (Request request : requestList) {
                 Player sender = plugin.getServer().getPlayer(request.getSender());
                 Player receiver = plugin.getServer().getPlayer(request.getReceiver());
 
                 if (sender == null || receiver == null) {
                     cancelRequest(request);
+                    continue;
+                }
+
+                if(ignoredPlayersForThisRun.contains(request.getSender())) {
                     continue;
                 }
 
@@ -65,6 +100,13 @@ public class TeleportRequestManager {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
+                            ReturnRequest returnRequest = new ReturnRequest(
+                                    teleportPlayer.getUniqueId(),
+                                    teleportPlayer.getLocation(),
+                                    System.currentTimeMillis()
+                            );
+
+                            returnRequests.put(teleportPlayer.getUniqueId(), returnRequest);
                             teleportPlayer.teleport(request.isHereRequest() ? sender : receiver);
                         }
                     }.runTask(plugin);
@@ -164,6 +206,8 @@ public class TeleportRequestManager {
             cancelRequest(request);
             requests.remove(request);
         }
+
+        returnRequests.remove(playerId);
     }
 
     public void acceptRequest(Request request) {
@@ -213,4 +257,7 @@ public class TeleportRequestManager {
         cancelRequest(request, "messages.request.canceled");
     }
 
+    public ReturnRequest getPlayerReturnRequest(UUID playerId) {
+        return returnRequests.get(playerId);
+    }
 }

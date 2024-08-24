@@ -15,6 +15,8 @@ public class Config {
 
         config.addDefault("tpa.timeout", 60);
         config.setComments("tpa.timeout", List.of("Time in seconds you have to accept a teleport request"));
+        config.addDefault("tpa.return-timeout", 60);
+        config.setComments("tpa.return-timeout", List.of("Time in seconds until the return command times out. Put 0 to make it usable indefinitely."));
 
         config.addDefault("tpa.wait", 5);
         config.setComments("tpa.wait", List.of(
@@ -55,10 +57,12 @@ public class Config {
         config.addDefault("messages.errors.player-self-request", "You can't send a teleport request to yourself.");
         config.addDefault("messages.errors.request-pending", "You already have a pending request.");
         config.addDefault("messages.errors.request-not-found", "You have no pending request.");
+        config.addDefault("messages.errors.return-not-found", "You have no place to return to, or it is timed out.");
         config.addDefault("messages.errors.request-not-found-by", "You have no pending request from %playername%.");
         config.addDefault("messages.errors.cooldown", "You have to wait %seconds% seconds before you can send another teleport request.");
 
         config.addDefault("messages.request.sent", "Teleport request sent to %playername% they have %seconds% seconds to accept it.");
+        config.addDefault("messages.request.return", "You will be returned to your last location.");
         config.addDefault("messages.request.received", "You have received a teleport request from %playername% which expires in %seconds% seconds.");
         config.addDefault("messages.request.accept", "Type /tpaccept to accept the request.");
         config.addDefault("messages.request.deny", "Type /tpadeny to deny the request.");

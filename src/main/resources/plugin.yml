@@ -29,6 +29,12 @@ commands:
     description: "Reload plugin configuration"
     usage: "/tpareload"
     permission: "justplayer.tpa.reload"
+  tpareturn:
+    description: "Returns you to the position before your teleport"
+    usage: "/tpareturn"
+    permission: "justplayer.tpa.return"
+    aliases:
+      - return
 permissions:
   justplayer.tpa.request:
     description: "Allows a player to request a teleport"
@@ -44,6 +50,9 @@ permissions:
     default: true
   justplayer.tpa.here:
     description: "Allows a player to request a player to teleport to them"
+    default: true
+  justplayer.tpa.return:
+    description: "Allows a player to return to the previous position after teleportation"
     default: true
   justplayer.tpa.reload:
     description: "Allows a player to reload the plugin configuration"

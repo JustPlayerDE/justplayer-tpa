@@ -1,7 +1,6 @@
 package de.justplayer.tpa;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -10,6 +9,9 @@ public class ReturnRequest {
     private final Location location;
     private final long timestamp;
     private boolean requested = false;
+
+    private boolean teleporting;
+    private long warmUpSinceTimestamp;
 
     public ReturnRequest(UUID playerId, Location location, long timestamp) {
         this.playerId = playerId;
@@ -39,5 +41,24 @@ public class ReturnRequest {
 
     public boolean isTimedOut(long timeOut) {
         return System.currentTimeMillis() - timestamp > timeOut * 1000L && !requested;
+    }
+
+
+    public void setTeleporting(boolean teleporting) {
+        this.teleporting = teleporting;
+    }
+
+    public boolean isTeleporting()
+    {
+        return this.teleporting;
+    }
+
+    public void setWarmUpSinceTimestamp(long timestamp) {
+        this.warmUpSinceTimestamp = timestamp;
+    }
+
+    public long getWarmUpSinceTimestamp()
+    {
+        return this.warmUpSinceTimestamp;
     }
 }

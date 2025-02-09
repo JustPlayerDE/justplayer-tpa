@@ -7,6 +7,9 @@ public class Request {
     private final UUID receiver;
     private final long timestamp;
 
+    private boolean teleporting;
+    private long warmUpSinceTimestamp;
+
     private final boolean isHereRequest;
     private boolean isAccepted = false;
 
@@ -43,5 +46,23 @@ public class Request {
 
     public boolean isTimedOut(long timeOut) {
         return System.currentTimeMillis() - timestamp > timeOut * 1000L;
+    }
+
+    public void setTeleporting(boolean teleporting) {
+        this.teleporting = teleporting;
+    }
+
+    public boolean isTeleporting()
+    {
+        return this.teleporting;
+    }
+
+    public void setWarmUpSinceTimestamp(long timestamp) {
+        this.warmUpSinceTimestamp = timestamp;
+    }
+
+    public long getWarmUpSinceTimestamp()
+    {
+        return this.warmUpSinceTimestamp;
     }
 }

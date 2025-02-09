@@ -5,9 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.justplayer.tpa.commands.*;
 import de.justplayer.tpa.listeners.PlayerLeaveListener;
+import de.justplayer.tpa.listeners.PlayerMoveListener;
 import de.justplayer.tpa.utils.CooldownManager;
 import de.justplayer.tpa.utils.TeleportRequestManager;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.http.HttpClient;
@@ -32,6 +34,8 @@ public class Plugin extends JavaPlugin {
 
         // Register listeners
         getServer().getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
+        handleOptionalListeners();
+
 
         // Register commands
         Objects.requireNonNull(getCommand("tpa")).setExecutor(new tpaCommandHandler(this));
@@ -112,6 +116,33 @@ public class Plugin extends JavaPlugin {
 
         teleportRequestManager.stop();
     }
+
+    @Override
+    public void reloadConfig()
+    {
+        super.reloadConfig();
+        this.handleOptionalListeners();
+    }
+
+    /**
+     * Enable or Disable specific (optional) listeners based on config
+     * I don't want these to run if they aren't used.
+     */
+    public void handleOptionalListeners() {
+        if(config == null) {
+            // We are still initialising
+            return;
+        }
+
+        if (config.getInt("tpa.wait", 0) > 0) {
+            log("PlayerMoveEvent Listener registered.", "Debug");
+            getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
+        } else {
+            log("PlayerMoveEvent Listener unregistered.", "Debug");
+            PlayerMoveEvent.getHandlerList().unregister(this);
+        }
+    }
+
 
     /**
      * Returns the translation for the given key

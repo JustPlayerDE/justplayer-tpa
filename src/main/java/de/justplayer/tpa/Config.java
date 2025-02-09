@@ -18,7 +18,7 @@ public class Config {
         config.addDefault("tpa.return-timeout", 60);
         config.setComments("tpa.return-timeout", List.of("Time in seconds until the return command times out. Put 0 to make it usable indefinitely."));
 
-        config.addDefault("tpa.wait", 5);
+        config.addDefault("tpa.wait", 0);
         config.setComments("tpa.wait", List.of(
                 "Time in seconds you have to wait before you teleport (after teleport request was accepted)",
                 "Any movement will cancel the teleport, 0 to disable",

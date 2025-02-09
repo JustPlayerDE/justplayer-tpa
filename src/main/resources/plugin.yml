@@ -57,3 +57,6 @@ permissions:
   justplayer.tpa.reload:
     description: "Allows a player to reload the plugin configuration"
     default: op
+  justplayer.tpa.wait.bypass:
+    description: "Allows a player to bypass the teleport wait time"
+    default: op

@@ -198,6 +198,10 @@ public class TeleportRequestManager {
         return null;
     }
 
+    public ReturnRequest getPlayerReturnRequest(UUID playerId) {
+        return returnRequests.get(playerId);
+    }
+
     /**
      * Remove all requests from or to a specific player
      */
@@ -222,6 +226,8 @@ public class TeleportRequestManager {
         request.setAccepted(true);
     }
 
+    // We don't talk about the code below
+
     public void cancelRequest(Request request, String senderReason, String receiverReason) {
         Player sender = plugin.getServer().getPlayer(request.getSender());
         Player receiver = plugin.getServer().getPlayer(request.getReceiver());
@@ -244,12 +250,37 @@ public class TeleportRequestManager {
         requests.remove(request);
     }
 
+    public void cancelRequest(ReturnRequest request, String senderReason, String receiverReason) {
+        Player sender = plugin.getServer().getPlayer(request.getPlayerId());
+        String prefix = plugin.translate("messages.prefix");
+
+        if (sender == null) {
+            returnRequests.remove(request.getPlayerId());
+            return;
+        }
+
+        sender.sendMessage(prefix + plugin.translate(senderReason));
+        returnRequests.remove(request.getPlayerId());
+    }
+
     public void cancelRequest(Request request, String key, Map<String, String> placeholders)
     {
-        cancelRequest(request, plugin.translate(key,placeholders));
+        this.cancelRequest(request, plugin.translate(key,placeholders));
+    }
+
+    public void cancelRequest(ReturnRequest returnRequest, String key, Map<String, String> placeholders)
+    {
+        this.cancelRequest(returnRequest, plugin.translate(key,placeholders));
     }
 
     public void cancelRequest(Request request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders)
+    {
+        cancelRequest(request,
+                plugin.translate(senderKey,senderPlaceholders),
+                plugin.translate(receiverKey,receiverPlaceholders)
+        );
+    }
+    public void cancelRequest(ReturnRequest request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders)
     {
         cancelRequest(request,
                 plugin.translate(senderKey,senderPlaceholders),
@@ -260,12 +291,14 @@ public class TeleportRequestManager {
     public void cancelRequest(Request request, String reason) {
         cancelRequest(request, reason, reason);
     }
+    public void cancelRequest(ReturnRequest request, String reason) {
+        cancelRequest(request, reason, reason);
+    }
 
     public void cancelRequest(Request request) {
         cancelRequest(request, "messages.request.canceled");
     }
-
-    public ReturnRequest getPlayerReturnRequest(UUID playerId) {
-        return returnRequests.get(playerId);
+    public void cancelRequest(ReturnRequest request) {
+        cancelRequest(request, "messages.request.canceled");
     }
 }

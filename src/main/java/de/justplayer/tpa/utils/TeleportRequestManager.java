@@ -22,7 +22,7 @@ public class TeleportRequestManager {
 
     public void start() {
         if (this.scheduler != null) {
-            plugin.log("Teleport Scheduler has been started while one is already started.", "Debug");
+            plugin.log("Teleport Scheduler has been started while one is already running.", "Debug");
             this.scheduler.cancel();
         }
 

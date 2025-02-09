@@ -21,8 +21,7 @@ public class Config {
         config.addDefault("tpa.wait", 0);
         config.setComments("tpa.wait", List.of(
                 "Time in seconds you have to wait before you teleport (after teleport request was accepted)",
-                "Any movement will cancel the teleport, 0 to disable",
-                "Note: this feature is not implemented yet, teleports are currently instant."
+                "Any movement will cancel the teleport, 0 to disable"
         ));
 
         config.addDefault("tpa.cooldowns.tpa", 60);
@@ -82,6 +81,11 @@ public class Config {
         config.addDefault("messages.request.timeout-from", "Your teleport request from %playername% has timed out.");
         config.addDefault("messages.request.teleported-to", "You have been teleported to %playername%.");
         config.addDefault("messages.request.teleported-from", "%playername% has been teleported to you.");
+        config.addDefault("messages.request.moved-return", "Teleportation has been cancelled because you have moved.");
+        config.addDefault("messages.request.moved-to", "Teleportation to %playername% has been cancelled because you have moved.");
+        config.addDefault("messages.request.moved-from", "Teleportation cancelled because %playername% has moved.");
+        config.addDefault("messages.request.wait-to", "Please stand still for %time% seconds to get teleported to %playername%");
+        config.addDefault("messages.request.wait-from", "%playername% will be teleported in %time% seconds.");
 
         config.options().copyDefaults(true);
         this.plugin.saveConfig();

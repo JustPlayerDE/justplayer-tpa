@@ -84,7 +84,8 @@ public class Config {
         config.addDefault("messages.request.moved-return", "Teleportation has been cancelled because you have moved.");
         config.addDefault("messages.request.moved-to", "Teleportation to %playername% has been cancelled because you have moved.");
         config.addDefault("messages.request.moved-from", "Teleportation cancelled because %playername% has moved.");
-        config.addDefault("messages.request.wait-to", "Please stand still for %time% seconds to get teleported to %playername%");
+        config.addDefault("messages.request.wait-to", "Please stand still for %time% seconds to get teleported to %playername%.");
+        config.addDefault("messages.request.wait-to-here", "Please stand still for %time% seconds to get %playername% teleported to you.");
         config.addDefault("messages.request.wait-from", "%playername% will be teleported in %time% seconds.");
 
         config.options().copyDefaults(true);

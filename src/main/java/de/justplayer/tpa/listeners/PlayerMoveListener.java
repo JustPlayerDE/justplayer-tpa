@@ -51,7 +51,7 @@ public class PlayerMoveListener implements Listener {
             plugin.log("Player " + event.getPlayer().getUniqueId() + " has moved while being returned.", "Debug");
 
             plugin.teleportRequestManager.cancelRequest(
-                    teleportRequest,
+                    returnRequest,
                     "messages.request.moved-return"
             );
         }

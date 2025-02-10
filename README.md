@@ -3,9 +3,9 @@
 JustPlayer TPA (short JustTPA) is a simple tpa plugin where players can ask other players if
 they can teleport to them. This plugin is very simple and easy to use.
 
-I mainly made this plugin for myself, but i also wanted to share it with others.
+I mainly made this plugin for myself, but I also wanted to share it with others.
 
-The reason for why i even made this plugin is because no existing tpa plugin has satisfied my needs.
+The reason for why I even made this plugin is because no existing tpa plugin has satisfied my needs.
 
 ## Commands
 
@@ -16,15 +16,20 @@ The reason for why i even made this plugin is because no existing tpa plugin has
 - `/tpahere <player>` - Sends a teleport request to the player to teleport to you. (`justplayer.tpa.here`)
 - `/tpareload` - Reloads the plugin configuration (`justplayer.tpa.reload`, OP by default)
 
-> This plugin is still in development, if you find any issues please let me know!
+## Other Permissions
+
+- `justplayer.tpa.wait.bypass` - bypasses the wait for teleports if enabled. OP by Default.
 
 ## Supported versions
 
-I can only support the latest minecraft spigot and paper.
+Because of time restrictions im only able to test on the latest stable version of both spigot and paper.
 
-The plugin may work on prior versions, but I only have time to test on the most recent minor (x.x.y) of a minecraft major (x.y) version.
+I'll be looking into Folia support when I can.
 
-Currently used API is 1.19
+In most cases, an update to JustTPA won't be necessary unless there are significant changes to the plugin system (e.g., if Paper or Spigot drops support for the 1.19 API) or if the command/teleportation mechanics are changed.
+Should any issues arise, I’ll provide updates as needed.
+
+Currently used API is Spigot 1.19
 
 ## Update Checker
 

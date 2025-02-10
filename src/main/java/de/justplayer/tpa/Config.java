@@ -89,6 +89,7 @@ public class Config {
         config.addDefault("messages.request.wait-to-here", "Please stand still for %time% seconds to get %playername% teleported to you.");
         config.addDefault("messages.request.wait-from", "%playername% will be teleported in %time% seconds.");
         config.addDefault("messages.request.wait-from-here", "you will be teleported to %playername% in %time% seconds.");
+        config.addDefault("messages.request.wait-return", "You will be returned in %time% seconds. Please stand still.");
 
         config.options().copyDefaults(true);
         this.plugin.saveConfig();

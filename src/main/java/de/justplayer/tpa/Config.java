@@ -21,7 +21,7 @@ public class Config {
         config.addDefault("tpa.wait", 0);
         config.setComments("tpa.wait", List.of(
                 "Time in seconds you have to wait before you teleport (after teleport request was accepted)",
-                "Any movement will cancel the teleport, 0 to disable",
+                "Any movement will cancel the teleport (minor movements are ignored as long as they stay in the same block), 0 to disable",
                 "Note: The requesting player has to wait for teleport in both tpahere and tpa cases."
         ));
 

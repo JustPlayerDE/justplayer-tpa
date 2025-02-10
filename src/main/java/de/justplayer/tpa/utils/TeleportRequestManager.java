@@ -31,6 +31,7 @@ public class TeleportRequestManager {
             List<Request> requestList = new ArrayList<>(requests);
             HashMap<UUID, ReturnRequest> returnRequestMap = new HashMap<>(returnRequests);
             List<UUID> ignoredPlayersForThisRun = new ArrayList<>();
+            int warmUpTime = plugin.config.getInt("tpa.wait", 0);
 
             returnRequestMap.forEach((UUID playerId, ReturnRequest request) -> {
 
@@ -44,21 +45,32 @@ public class TeleportRequestManager {
 
                     return;
                 }
-
-                returnRequests.remove(playerId);
-                ignoredPlayersForThisRun.add(playerId);
                 Player teleportPlayer = Bukkit.getPlayer(playerId);
 
-                if(teleportPlayer == null) {
+                if (teleportPlayer == null) {
                     return;
                 }
 
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        teleportPlayer.teleport(request.getLocation());
+                if(!request.isTeleporting()) {
+                    request.setTeleporting(true);
+                    request.setWarmUpSinceTimestamp(System.currentTimeMillis());
+
+                    if(warmUpTime > 0) {
+                        teleportPlayer.sendMessage(prefix + plugin.translate( "messages.request.wait-return", Map.of("time", String.valueOf(warmUpTime))));
                     }
-                }.runTask(plugin);
+                }
+
+                if(request.isTeleporting() && (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()) {
+                    returnRequests.remove(playerId);
+                    ignoredPlayersForThisRun.add(playerId);
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            teleportPlayer.teleport(request.getLocation());
+                        }
+                    }.runTask(plugin);
+                }
             });
 
             // Then normal requests
@@ -66,8 +78,10 @@ public class TeleportRequestManager {
                 Player sender = plugin.getServer().getPlayer(request.getSender());
                 Player receiver = plugin.getServer().getPlayer(request.getReceiver());
 
-                if (sender == null || receiver == null) {
+                Player teleportedPlayer = request.isHereRequest() ? receiver : sender;
+                Player teleportTargetPlayer = request.isHereRequest() ? sender : receiver;
 
+                if (sender == null || receiver == null) {
                     plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been removed because either sender or receiver is gone.", "Debug");
                     cancelRequest(request);
                     continue;
@@ -79,7 +93,7 @@ public class TeleportRequestManager {
                 }
 
                 // Timeout check
-                if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout")) && !request.isAccepted()) {
+                if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout")) && !request.isAccepted() && !request.isTeleporting()) {
                     plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been timed out.", "Debug");
                     cancelRequest(
                             request,
@@ -92,29 +106,37 @@ public class TeleportRequestManager {
                     continue;
                 }
 
+
                 // Accept check
-                if (request.isAccepted()) {
+                if (request.isAccepted() && !request.isTeleporting()) {
                     plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been accepted.", "Debug");
-                    Player teleportPlayer = request.isHereRequest() ? receiver : sender;
-                    if (!request.isHereRequest()) {
-                        sender.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", receiver.getName())));
-                        receiver.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", sender.getName())));
-                    } else {
-                        sender.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", receiver.getName())));
-                        receiver.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", sender.getName())));
+
+                    // The sender has to stand still
+                    if(warmUpTime > 0) {
+                        sender.sendMessage(prefix + plugin.translate( request.isHereRequest() ? "messages.request.wait-to-here" : "messages.request.wait-to", Map.of("playername", receiver.getName(), "time", String.valueOf(warmUpTime))));
+                        receiver.sendMessage(prefix + plugin.translate( request.isHereRequest() ? "messages.request.wait-from-here" :"messages.request.wait-from", Map.of("playername", sender.getName(), "time", String.valueOf(warmUpTime))));
                     }
 
+                    request.setTeleporting(true);
+                    request.setWarmUpSinceTimestamp(System.currentTimeMillis());
+                }
+
+                if(request.isTeleporting() && (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()) {
+                    teleportedPlayer.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", teleportTargetPlayer.getName())));
+                    teleportTargetPlayer.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", teleportedPlayer.getName())));
+
+                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been fulfilled.", "Debug");
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             ReturnRequest returnRequest = new ReturnRequest(
-                                    teleportPlayer.getUniqueId(),
-                                    teleportPlayer.getLocation(),
+                                    teleportedPlayer.getUniqueId(),
+                                    teleportedPlayer.getLocation(),
                                     System.currentTimeMillis()
                             );
 
-                            returnRequests.put(teleportPlayer.getUniqueId(), returnRequest);
-                            teleportPlayer.teleport(request.isHereRequest() ? sender : receiver);
+                            returnRequests.put(teleportedPlayer.getUniqueId(), returnRequest);
+                            teleportedPlayer.teleport(teleportTargetPlayer);
                         }
                     }.runTask(plugin);
 

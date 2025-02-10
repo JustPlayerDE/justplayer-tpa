@@ -55,12 +55,17 @@ public class TeleportRequestManager {
                     request.setTeleporting(true);
                     request.setWarmUpSinceTimestamp(System.currentTimeMillis());
 
-                    if(warmUpTime > 0) {
+                    if(warmUpTime > 0 && !teleportPlayer.hasPermission("justplayer.tpa.wait.bypass")) {
                         teleportPlayer.sendMessage(prefix + plugin.translate( "messages.request.wait-return", Map.of("time", String.valueOf(warmUpTime))));
                     }
                 }
 
-                if(request.isTeleporting() && (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()) {
+                if(request.isTeleporting() &&
+                        (
+                                (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()
+                                || teleportPlayer.hasPermission("justplayer.tpa.wait.bypass")
+                        )
+                ) {
                     returnRequests.remove(playerId);
                     ignoredPlayersForThisRun.add(playerId);
 
@@ -112,7 +117,7 @@ public class TeleportRequestManager {
                     plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been accepted.", "Debug");
 
                     // The sender has to stand still
-                    if(warmUpTime > 0) {
+                    if(warmUpTime > 0 && !sender.hasPermission("justplayer.tpa.wait.bypass")) {
                         sender.sendMessage(prefix + plugin.translate( request.isHereRequest() ? "messages.request.wait-to-here" : "messages.request.wait-to", Map.of("playername", receiver.getName(), "time", String.valueOf(warmUpTime))));
                         receiver.sendMessage(prefix + plugin.translate( request.isHereRequest() ? "messages.request.wait-from-here" :"messages.request.wait-from", Map.of("playername", sender.getName(), "time", String.valueOf(warmUpTime))));
                     }
@@ -121,7 +126,10 @@ public class TeleportRequestManager {
                     request.setWarmUpSinceTimestamp(System.currentTimeMillis());
                 }
 
-                if(request.isTeleporting() && (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()) {
+                if(request.isTeleporting() && (
+                        (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()
+                                || sender.hasPermission("justplayer.tpa.wait.bypass")
+                )) {
                     teleportedPlayer.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", teleportTargetPlayer.getName())));
                     teleportTargetPlayer.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", teleportedPlayer.getName())));
 

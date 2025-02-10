@@ -52,7 +52,7 @@ public class tpahereCommandHandler implements CommandExecutor {
             return true;
         }
 
-        if (plugin.teleportRequestManager.getRequestByPlayer(player.getUniqueId()) != null) {
+        if (plugin.teleportRequestManager.getRequestBySender(player.getUniqueId()) != null) {
             player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-pending"));
             return true;
         }

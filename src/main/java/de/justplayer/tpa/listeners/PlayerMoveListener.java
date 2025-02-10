@@ -32,7 +32,7 @@ public class PlayerMoveListener implements Listener {
             return;
         }
 
-        Request teleportRequest = this.plugin.teleportRequestManager.getRequestByPlayer(event.getPlayer().getUniqueId());
+        Request teleportRequest = this.plugin.teleportRequestManager.getRequestBySender(event.getPlayer().getUniqueId());
         if( teleportRequest != null && teleportRequest.isTeleporting()) {
             plugin.log("Player " + event.getPlayer().getUniqueId() + " has moved while being teleported.", "Debug");
             Player receiver = plugin.getServer().getPlayer(teleportRequest.getReceiver());

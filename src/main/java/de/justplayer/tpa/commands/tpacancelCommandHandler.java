@@ -25,7 +25,7 @@ public class tpacancelCommandHandler implements CommandExecutor {
             return true;
         }
 
-        Request request = plugin.teleportRequestManager.getRequestByPlayer(player.getUniqueId());
+        Request request = plugin.teleportRequestManager.getRequestBySender(player.getUniqueId());
 
         if (request == null) {
             player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found"));

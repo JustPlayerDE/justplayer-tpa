@@ -163,7 +163,7 @@ public class TeleportRequestManager {
     /**
      * Get a request by the sender
      */
-    public Request getRequestByPlayer(UUID playerId) {
+    public Request getRequestBySender(UUID playerId) {
         long requestTimeout = plugin.getConfig().getInt("tpa.timeout");
         for (Request request : requests) {
             if (request.getSender().equals(playerId)) {

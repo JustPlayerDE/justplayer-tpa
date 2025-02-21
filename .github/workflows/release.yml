@@ -22,22 +22,15 @@ jobs:
         run: mvn --batch-mode --update-snapshots package "-Drevision=${{ github.event.release.tag_name }}"
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
-          name: "JustPlayer TPA"
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-          #modrinth-id: GM9AuKjX
+          modrinth-id: GM9AuKjX
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           #modrinth-featured: true
           #modrinth-unfeature-mode: subset
-          #modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
           #curseforge-id: TODO? do i even want to publish on curseforge? idk
           #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          version-type: alpha
-          loaders: |
-            spigot
-            paper
-          game-versions: |
-            1.20
           files: |
-            target/tpa-v*.jar
+            */target/tpa-${{ github.event.release.tag_name }}.jar
           fail-mode: skip

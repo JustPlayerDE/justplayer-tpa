@@ -32,5 +32,5 @@ jobs:
           #curseforge-id: TODO? do i even want to publish on curseforge? idk
           #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           files: |
-            */target/tpa-${{ github.event.release.tag_name }}.jar
+            target/tpa-${{ github.event.release.tag_name }}.jar
           fail-mode: skip

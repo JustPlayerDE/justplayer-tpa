@@ -33,4 +33,11 @@ jobs:
           #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           files: |
             target/tpa-${{ github.event.release.tag_name }}.jar
+
+          loaders: |
+            spigot
+            paper
+            bukkit
+          game-versions: |
+            >1.19
           fail-mode: skip

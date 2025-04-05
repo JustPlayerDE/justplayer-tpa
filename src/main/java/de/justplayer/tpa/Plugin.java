@@ -47,9 +47,9 @@ public class Plugin extends JavaPlugin {
         initialiseStatistics();
         checkForUpdates();
 
-        getLogger().info("JustTPA initialized");
+        log("JustTPA initialized");
         if (getDescription().getVersion().contains("dev")) {
-            getLogger().warning("Using Development version, plugin may be unstable. bStats and Update checks are disabled.");
+            log("Using Development version, plugin may be unstable. bStats and Update checks are disabled.", "Warning");
         }
     }
 
@@ -115,7 +115,7 @@ public class Plugin extends JavaPlugin {
         }
 
         new Metrics(this, 18743);
-        getLogger().info("bStats enabled");
+        log("bStats enabled", "Info");
     }
 
 
@@ -128,7 +128,7 @@ public class Plugin extends JavaPlugin {
         String serverSoftware = getServer().getVersion().split("-")[1].split(" ")[0].toLowerCase();
         String currentPluginVersion = getDescription().getVersion();
 
-        getLogger().info("Checking for updates...");
+        log("Checking for updates...");
 
         getServer().getScheduler().runTaskAsynchronously(this, () -> {
             HttpClient client = HttpClient.newHttpClient();
@@ -144,14 +144,14 @@ public class Plugin extends JavaPlugin {
             try {
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 if (response.statusCode() != 200) {
-                    getLogger().warning("Failed to check for updates");
+                    log("Failed to check for updates", "Warning");
                     return;
                 }
 
                 JsonArray jsonResponse = JsonParser.parseString(response.body()).getAsJsonArray();
 
                 if (jsonResponse.isEmpty()) {
-                    getLogger().warning("Failed to check for updates (no supported versions found)");
+                    log("Failed to check for updates (no supported versions found)", "Warning");
                     return;
                 }
 
@@ -159,14 +159,14 @@ public class Plugin extends JavaPlugin {
                 String latestPluginVersion = latestVersion.get("version_number").getAsString();
 
                 if (!currentPluginVersion.equals(latestPluginVersion)) {
-                    getLogger().info("A new version is available: " + latestPluginVersion);
-                    getLogger().info("Download it at: https://modrinth.com/plugin/justplayer-tpa/versions?l=" + serverSoftware + "&g=" + minecraftVersion);
+                    log("A new version is available: " + latestPluginVersion, "Info");
+                    log("Download it at: https://modrinth.com/plugin/justplayer-tpa/versions?l=" + serverSoftware + "&g=" + minecraftVersion, "Info");
                 } else {
-                    getLogger().info("You are using the latest version for your server.");
+                    log("You are using the latest version for your server.", "Info");
                 }
 
             } catch (Exception e) {
-                getLogger().warning("Failed to check for updates");
+                log("Failed to check for updates", "Warning");
                 e.printStackTrace();
             }
         });
@@ -174,7 +174,7 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getLogger().info("JustTPA disabled");
+        log("JustTPA disabled");
 
         teleportRequestManager.stop();
     }

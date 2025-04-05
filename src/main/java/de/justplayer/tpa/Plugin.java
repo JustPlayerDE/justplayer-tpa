@@ -4,7 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.justplayer.tpa.commands.*;
-import de.justplayer.tpa.listeners.*;
+import de.justplayer.tpa.listeners.PlayerLeaveListener;
+import de.justplayer.tpa.listeners.PlayerMoveListener;
 import de.justplayer.tpa.utils.CooldownManager;
 import de.justplayer.tpa.utils.TeleportRequestManager;
 import org.bstats.bukkit.Metrics;
@@ -23,11 +24,23 @@ public class Plugin extends JavaPlugin {
     public CooldownManager cooldownManager;
     public TeleportRequestManager teleportRequestManager;
 
-    // Important for future updates and features
-    public boolean isFolia = false;
-    public boolean isPaper = false;
+    public boolean isFolia = false; // for the future
+    public boolean isPaper = false; // for the future
+    public boolean isDevelopmentVersion = false;
 
     public Plugin() {
+        // Folia
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            isFolia = true;
+        } catch (ClassNotFoundException ignored) {}
+
+        // Paper
+        try {
+            Class.forName("io.papermc.paper.util.Tick");
+            isPaper = true;
+        } catch (ClassNotFoundException ignored) {}
+
         config = new Config(this);
         cooldownManager = new CooldownManager();
         teleportRequestManager = new TeleportRequestManager(this);
@@ -35,7 +48,10 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        checkPlatformStuff();
+        if (getDescription().getVersion().contains("dev")) {
+            log("Using Development version, plugin may be unstable. bStats and Update checks are disabled.", "Warning");
+            isDevelopmentVersion = true;
+        }
 
         initialiseCommands();
 
@@ -48,29 +64,6 @@ public class Plugin extends JavaPlugin {
         checkForUpdates();
 
         log("JustTPA initialized");
-        if (getDescription().getVersion().contains("dev")) {
-            log("Using Development version, plugin may be unstable. bStats and Update checks are disabled.", "Warning");
-        }
-    }
-
-    private void checkPlatformStuff() {
-        // Folia
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
-            log("Running on Folia");
-            isFolia = true;
-        } catch (ClassNotFoundException e) {
-            isFolia = false;
-        }
-
-        // Paper
-        try {
-            Class.forName("io.papermc.paper.util.Tick");
-            log("Running on Paper");
-            isPaper = true;
-        } catch (ClassNotFoundException e) {
-            isPaper = false;
-        }
     }
 
     private void initialiseEvents() {
@@ -110,7 +103,7 @@ public class Plugin extends JavaPlugin {
     }
 
     private void initialiseStatistics() {
-        if (!config.getBoolean("bStats.enabled") || getDescription().getVersion().contains("dev")) {
+        if (!config.getBoolean("bStats.enabled") || isDevelopmentVersion) {
             return;
         }
 
@@ -120,7 +113,7 @@ public class Plugin extends JavaPlugin {
 
 
     private void checkForUpdates() {
-        if (!config.getBoolean("check-for-updates") || getDescription().getVersion().contains("dev")) {
+        if (!config.getBoolean("check-for-updates") || isDevelopmentVersion) {
             return;
         }
 
@@ -213,16 +206,16 @@ public class Plugin extends JavaPlugin {
 
     public void log(String message, String prefix) {
         if (prefix != null) {
-            if (Objects.equals(prefix, "Debug") && !config.getBoolean("tpa.verbose")) {
+            if (Objects.equals(prefix, "Debug") && !(config != null && config.getBoolean("tpa.verbose"))) {
                 return;
             }
 
-            if(prefix.equals("Warning")) {
+            if (prefix.equals("Warning")) {
                 getLogger().warning(message);
                 return;
             }
 
-            if(prefix.isBlank() || prefix.equals("Info")) {
+            if (prefix.isBlank() || prefix.equals("Info")) {
                 getLogger().info(message);
                 return;
             }

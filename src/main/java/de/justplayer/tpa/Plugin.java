@@ -4,11 +4,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.justplayer.tpa.commands.*;
+import de.justplayer.tpa.listeners.PlayerDamageListener;
 import de.justplayer.tpa.listeners.PlayerLeaveListener;
 import de.justplayer.tpa.listeners.PlayerMoveListener;
 import de.justplayer.tpa.utils.CooldownManager;
 import de.justplayer.tpa.utils.TeleportRequestManager;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -84,11 +86,13 @@ public class Plugin extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
 
         if (config.getInt("tpa.wait", 0) > 0) {
-            log("PlayerMoveEvent Listener registered.", "Debug");
+            log("Optional Listeners has been enabled.", "Debug");
             pluginManager.registerEvents(new PlayerMoveListener(this), this);
+            pluginManager.registerEvents(new PlayerDamageListener(this), this);
         } else {
-            log("PlayerMoveEvent Listener unregistered.", "Debug");
+            log("Optional Listeners has been disabled.", "Debug");
             PlayerMoveEvent.getHandlerList().unregister(this);
+            EntityDamageEvent.getHandlerList().unregister(this);
         }
     }
 

@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class tpacancelCommandHandler implements CommandExecutor {
+public class tpacancelCommand implements CommandExecutor {
     private final Plugin plugin;
 
-    public tpacancelCommandHandler(Plugin plugin) {
+    public tpacancelCommand(Plugin plugin) {
         this.plugin = plugin;
     }
 

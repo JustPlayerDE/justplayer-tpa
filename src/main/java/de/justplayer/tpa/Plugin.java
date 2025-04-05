@@ -74,13 +74,13 @@ public class Plugin extends JavaPlugin {
     }
 
     private void initialiseCommands() {
-        Objects.requireNonNull(getCommand("tpa")).setExecutor(new tpaCommandHandler(this));
-        Objects.requireNonNull(getCommand("tpahere")).setExecutor(new tpahereCommandHandler(this));
-        Objects.requireNonNull(getCommand("tpaccept")).setExecutor(new tpacceptCommandHandler(this));
-        Objects.requireNonNull(getCommand("tpadeny")).setExecutor(new tpadenyCommandHandler(this));
-        Objects.requireNonNull(getCommand("tpacancel")).setExecutor(new tpacancelCommandHandler(this));
-        Objects.requireNonNull(getCommand("tpareload")).setExecutor(new tpareloadCommandHandler(this));
-        Objects.requireNonNull(getCommand("tpareturn")).setExecutor(new tpareturnCommandHandler(this));
+        Objects.requireNonNull(getCommand("tpa")).setExecutor(new tpaCommand(this));
+        Objects.requireNonNull(getCommand("tpahere")).setExecutor(new tpahereCommand(this));
+        Objects.requireNonNull(getCommand("tpaccept")).setExecutor(new tpacceptCommand(this));
+        Objects.requireNonNull(getCommand("tpadeny")).setExecutor(new tpadenyCommand(this));
+        Objects.requireNonNull(getCommand("tpacancel")).setExecutor(new tpacancelCommand(this));
+        Objects.requireNonNull(getCommand("tpareload")).setExecutor(new tpareloadCommand(this));
+        Objects.requireNonNull(getCommand("tpareturn")).setExecutor(new tpareturnCommand(this));
     }
 
     private void initialiseStatistics() {

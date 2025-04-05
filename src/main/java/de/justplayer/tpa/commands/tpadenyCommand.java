@@ -10,10 +10,10 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Map;
 
-public class tpadenyCommandHandler implements CommandExecutor {
+public class tpadenyCommand implements CommandExecutor {
     private final Plugin plugin;
 
-    public tpadenyCommandHandler(Plugin plugin) {
+    public tpadenyCommand(Plugin plugin) {
         this.plugin = plugin;
     }
 

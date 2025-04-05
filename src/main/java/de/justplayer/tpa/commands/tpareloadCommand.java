@@ -5,11 +5,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class tpareloadCommandHandler implements CommandExecutor {
+public class tpareloadCommand implements CommandExecutor {
 
     private final Plugin plugin;
 
-    public tpareloadCommandHandler(Plugin plugin) {
+    public tpareloadCommand(Plugin plugin) {
         this.plugin = plugin;
     }
 

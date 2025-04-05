@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class tpahereCommandHandler implements CommandExecutor {
+public class tpaCommand implements CommandExecutor {
 
     private final Plugin plugin;
 
-    public tpahereCommandHandler(Plugin plugin) {
+    public tpaCommand(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -28,7 +28,7 @@ public class tpahereCommandHandler implements CommandExecutor {
         }
 
         if (args.length != 1) {
-            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.usages.tpahere"));
+            player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.usages.tpa"));
             return true;
         }
 
@@ -44,7 +44,7 @@ public class tpahereCommandHandler implements CommandExecutor {
             return true;
         }
 
-        if (plugin.cooldownManager.isOnCooldown(player.getUniqueId(), "tpaHere")) {
+        if (plugin.cooldownManager.isOnCooldown(player.getUniqueId(), "tpa")) {
             player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.cooldown",
                     Map.of("seconds", Integer.toString(plugin.cooldownManager.getCooldown(player.getUniqueId(), "tpa")))
             ));
@@ -57,12 +57,12 @@ public class tpahereCommandHandler implements CommandExecutor {
             return true;
         }
 
-        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpaHere", plugin.config.getInt("tpa.cooldowns.tpaHere"));
+        plugin.cooldownManager.addCooldown(player.getUniqueId(), "tpa", plugin.config.getInt("tpa.cooldowns.tpa"));
 
         plugin.teleportRequestManager.createRequest(
                 player.getUniqueId(),
                 target.getUniqueId(),
-                true
+                false
         );
 
         player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.sent",
@@ -79,9 +79,9 @@ public class tpahereCommandHandler implements CommandExecutor {
                 )
         ));
 
-        target.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.warning-tpa-here", Map.of("playername", player.getName())));
         target.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.accept"));
         target.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.request.deny"));
+
 
         return true;
     }

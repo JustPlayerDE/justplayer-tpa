@@ -1,19 +1,20 @@
 package de.justplayer.tpa.utils;
 
 import de.justplayer.tpa.Plugin;
-import de.justplayer.tpa.TeleportRequest;
 import de.justplayer.tpa.ReturnRequest;
+import de.justplayer.tpa.TeleportRequest;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class TeleportRequestManager {
     private final Plugin plugin;
     private final List<TeleportRequest> requests = new ArrayList<>();
-    private final HashMap<UUID, ReturnRequest> returnRequests = new HashMap<>();
+    private final Map<UUID, ReturnRequest> returnRequests = new ConcurrentHashMap<>();
     private BukkitTask scheduler;
 
     public TeleportRequestManager(Plugin plugin) {
@@ -22,185 +23,187 @@ public class TeleportRequestManager {
 
     public void start() {
         if (this.scheduler != null) {
-            plugin.log("Teleport Scheduler has been started while one is already running.", "Debug");
+            plugin.log("Teleport Scheduler has been started while one is already running.", "Warning");
             this.scheduler.cancel();
         }
 
         this.scheduler = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            String prefix = plugin.translate("messages.prefix");
-            List<TeleportRequest> requestList = new ArrayList<>(requests);
-            HashMap<UUID, ReturnRequest> returnRequestMap = new HashMap<>(returnRequests);
-            List<UUID> ignoredPlayersForThisRun = new ArrayList<>();
-            int warmUpTime = plugin.config.getInt("tpa.wait", 0);
-
-            returnRequestMap.forEach((UUID playerId, ReturnRequest request) -> {
-
-                if(!request.getRequested()) {
-                    int timeout = plugin.getConfig().getInt("tpa.return-timeout");
-                    if (timeout > 0 && request.isTimedOut(timeout)) {
-                        // Silently remove it, the player doesn't care about returns as much and if so they already used it.
-                        plugin.log("Return request for " + playerId + " has been timed out", "Debug");
-                        returnRequests.remove(playerId);
-                    }
-
-                    return;
-                }
-                Player teleportPlayer = Bukkit.getPlayer(playerId);
-
-                if (teleportPlayer == null) {
-                    return;
-                }
-
-                if(!request.isTeleporting()) {
-                    request.setTeleporting(true);
-                    request.setWarmUpSinceTimestamp(System.currentTimeMillis());
-
-                    if(warmUpTime > 0 && !teleportPlayer.hasPermission("justplayer.tpa.wait.bypass")) {
-                        teleportPlayer.sendMessage(prefix + plugin.translate( "messages.request.wait-return", Map.of("time", String.valueOf(warmUpTime))));
-                    }
-                }
-
-                if(request.isTeleporting() &&
-                        (
-                                (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()
-                                || teleportPlayer.hasPermission("justplayer.tpa.wait.bypass")
-                        )
-                ) {
-                    returnRequests.remove(playerId);
-                    ignoredPlayersForThisRun.add(playerId);
-
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            teleportPlayer.teleport(request.getLocation());
-                        }
-                    }.runTask(plugin);
-                }
-            });
-
-            // Then normal requests
-            for (TeleportRequest request : requestList) {
-                Player sender = plugin.getServer().getPlayer(request.getSender());
-                Player receiver = plugin.getServer().getPlayer(request.getReceiver());
-
-                Player teleportedPlayer = request.isHereRequest() ? receiver : sender;
-                Player teleportTargetPlayer = request.isHereRequest() ? sender : receiver;
-
-                if (sender == null || receiver == null) {
-                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been removed because either sender or receiver is gone.", "Debug");
-                    cancelRequest(request);
-                    continue;
-                }
-
-                if(ignoredPlayersForThisRun.contains(request.getSender())) {
-                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been ignored for now because sender has requested a return before.", "Debug");
-                    continue;
-                }
-
-                // Timeout check
-                if (request.isTimedOut(plugin.getConfig().getInt("tpa.timeout")) && !request.isAccepted() && !request.isTeleporting()) {
-                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been timed out.", "Debug");
-                    cancelRequest(
-                            request,
-                            "messages.request.timeout-to",
-                            Map.of("playername", receiver.getName()),
-                            "messages.request.timeout-from",
-                            Map.of("playername", sender.getName())
-                    );
-
-                    continue;
-                }
-
-
-                // Accept check
-                if (request.isAccepted() && !request.isTeleporting()) {
-                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been accepted.", "Debug");
-
-                    // The sender has to stand still
-                    if(warmUpTime > 0 && !sender.hasPermission("justplayer.tpa.wait.bypass")) {
-                        sender.sendMessage(prefix + plugin.translate( request.isHereRequest() ? "messages.request.wait-to-here" : "messages.request.wait-to", Map.of("playername", receiver.getName(), "time", String.valueOf(warmUpTime))));
-                        receiver.sendMessage(prefix + plugin.translate( request.isHereRequest() ? "messages.request.wait-from-here" :"messages.request.wait-from", Map.of("playername", sender.getName(), "time", String.valueOf(warmUpTime))));
-                    }
-
-                    request.setTeleporting(true);
-                    request.setWarmUpSinceTimestamp(System.currentTimeMillis());
-                }
-
-                if(request.isTeleporting() && (
-                        (request.getWarmUpSinceTimestamp() + ((long)warmUpTime * 1000)) <= System.currentTimeMillis()
-                                || sender.hasPermission("justplayer.tpa.wait.bypass")
-                )) {
-                    teleportedPlayer.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", teleportTargetPlayer.getName())));
-                    teleportTargetPlayer.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", teleportedPlayer.getName())));
-
-                    plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been fulfilled.", "Debug");
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            ReturnRequest returnRequest = new ReturnRequest(
-                                    teleportedPlayer.getUniqueId(),
-                                    teleportedPlayer.getLocation(),
-                                    System.currentTimeMillis()
-                            );
-
-                            returnRequests.put(teleportedPlayer.getUniqueId(), returnRequest);
-                            teleportedPlayer.teleport(teleportTargetPlayer);
-                        }
-                    }.runTask(plugin);
-
-                    requests.remove(request);
-                }
-            }
+            var prefix = plugin.translate("messages.prefix");
+            var warmUpTime = plugin.config.getInt("tpa.wait", 0);
+            var ignoredPlayersForThisRun = processReturnRequests(warmUpTime, prefix);
+            processTeleportRequests(ignoredPlayersForThisRun, warmUpTime, prefix);
         }, 0, 20);
     }
 
+    private void processTeleportRequests(List<UUID> ignoredPlayersForThisRun, long warmUpTime, String prefix) {
+        var tempRequests = new ArrayList<>(requests);
+
+        for (var request : tempRequests) {
+            var sender = plugin.getServer().getPlayer(request.getSender());
+            var receiver = plugin.getServer().getPlayer(request.getReceiver());
+
+            var teleportPlayer = request.isHereRequest() ? receiver : sender;
+            var teleportPlayerTo = request.isHereRequest() ? sender : receiver;
+
+            if (sender == null || receiver == null) {
+                plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been removed because either sender or receiver is gone.");
+                cancelRequest(request);
+                continue;
+            }
+
+            if (ignoredPlayersForThisRun.contains(request.getSender())) {
+                plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been ignored because sender has requested a return before.");
+                continue;
+            }
+
+            var timeoutValue = plugin.getConfig().getInt("tpa.timeout");
+            if (request.isTimedOut(timeoutValue) && !request.isAccepted() && !request.isTeleporting()) {
+                plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has timed out.");
+
+                cancelRequest(request,
+                        "messages.request.timeout-to", Map.of("playername", receiver.getName()),
+                        "messages.request.timeout-from", Map.of("playername", sender.getName())
+                );
+
+                continue;
+            }
+
+            if (request.isAccepted() && !request.isTeleporting()) {
+                plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been accepted.");
+                if (warmUpTime > 0 && !sender.hasPermission("justplayer.tpa.wait.bypass")) {
+                    sender.sendMessage(prefix + plugin.translate(
+                            request.isHereRequest() ? "messages.request.wait-to-here" : "messages.request.wait-to",
+                            Map.of("playername", receiver.getName(), "time", String.valueOf(warmUpTime)))
+                    );
+
+                    receiver.sendMessage(prefix + plugin.translate(
+                            request.isHereRequest() ? "messages.request.wait-from-here" : "messages.request.wait-from",
+                            Map.of("playername", sender.getName(), "time", String.valueOf(warmUpTime)))
+                    );
+                }
+                request.setTeleporting(true);
+                request.setWarmUpSinceTimestamp(System.currentTimeMillis());
+            }
+
+            if (request.isTeleporting() && (request.getWarmUpSinceTimestamp() + (warmUpTime * 1000) <= System.currentTimeMillis() || sender.hasPermission("justplayer.tpa.wait.bypass"))) {
+
+                teleportPlayer.sendMessage(prefix + plugin.translate("messages.request.teleported-to", Map.of("playername", teleportPlayerTo.getName())));
+                teleportPlayerTo.sendMessage(prefix + plugin.translate("messages.request.teleported-from", Map.of("playername", teleportPlayer.getName())));
+
+                plugin.log("Request for " + request.getSender() + " to " + request.getReceiver() + " has been fulfilled.");
+
+                new BukkitRunnable() {
+                    public void run() {
+                        var returnRequest = new ReturnRequest(
+                                teleportPlayer.getUniqueId(),
+                                teleportPlayer.getLocation(),
+                                System.currentTimeMillis()
+                        );
+                        returnRequests.put(teleportPlayer.getUniqueId(), returnRequest);
+                        teleportPlayer.teleport(teleportPlayerTo);
+                    }
+                }.runTask(plugin);
+
+                requests.remove(request);
+            }
+        }
+    }
+
+    private List<UUID> processReturnRequests(long warmUpTime, String prefix) {
+        var returnedPlayers = new ArrayList<UUID>();
+
+        for (var playerId : new ArrayList<>(returnRequests.keySet())) {
+            var request = returnRequests.get(playerId);
+            var teleportPlayer = Bukkit.getPlayer(request.getPlayerId());
+            if (teleportPlayer == null) {
+                continue;
+            }
+
+            var hasBypassTimeout = teleportPlayer.hasPermission("justplayer.tpa.timeout.bypass");
+            var hasBypassWait = teleportPlayer.hasPermission("justplayer.tpa.wait.bypass");
+            var isTeleporting = request.isTeleporting();
+
+            if (!request.getRequested()) {
+                var timeout = plugin.getConfig().getInt("tpa.return-timeout");
+
+                if (!hasBypassTimeout && timeout > 0 && request.isTimedOut(timeout)) {
+                    plugin.log("Return request for " + request.getPlayerId() + " has timed out");
+                    returnRequests.remove(playerId);
+                }
+
+                continue;
+            }
+
+            if (!isTeleporting) {
+                request.setTeleporting(true);
+                request.setWarmUpSinceTimestamp(System.currentTimeMillis());
+                if (warmUpTime > 0 && !hasBypassWait) {
+                    teleportPlayer.sendMessage(prefix + plugin.translate("messages.request.wait-return", Map.of("time", String.valueOf(warmUpTime))));
+                }
+            }
+
+            long fulfillRequestAt = request.getWarmUpSinceTimestamp() + (warmUpTime * 1000);
+            if (isTeleporting && (fulfillRequestAt <= System.currentTimeMillis() || hasBypassWait)) {
+                returnRequests.remove(playerId);
+                returnedPlayers.add(request.getPlayerId());
+
+                new BukkitRunnable() {
+                    public void run() {
+                        teleportPlayer.teleport(request.getLocation());
+                    }
+                }.runTask(plugin);
+            }
+        }
+
+        return returnedPlayers;
+    }
+
     public void stop() {
-        plugin.log("Stopping teleport scheduler task.", "Debug");
+        plugin.log("Stopping teleport scheduler task.");
         if (scheduler != null && !scheduler.isCancelled()) {
             scheduler.cancel();
         }
     }
 
     /**
-     * Creates a new teleport request
+     * Creates a new teleport request.
      */
     public void createRequest(UUID sender, UUID receiver, long timestamp, boolean isHereRequest) {
         requests.add(new TeleportRequest(sender, receiver, timestamp, isHereRequest));
     }
 
     /**
-     * Creates a new teleport request
+     * Creates a new teleport request with current timestamp.
      */
     public void createRequest(UUID sender, UUID receiver, boolean isHereRequest) {
         createRequest(sender, receiver, System.currentTimeMillis(), isHereRequest);
     }
 
     /**
-     * Get all requests for a specific player (receiver)
+     * Get all requests for a specific player (receiver).
      */
     public List<TeleportRequest> getRequestsForPlayer(UUID playerId) {
-        List<TeleportRequest> foundRequests = new ArrayList<>();
-
-        for (TeleportRequest request : requests) {
-            if (request.getReceiver().equals(playerId)) {
-                foundRequests.add(request);
-            }
-        }
-
-        return foundRequests;
+        return requests.stream()
+                .filter(request -> request.getReceiver().equals(playerId))
+                .collect(Collectors.toList());
     }
 
     /**
-     * Get a request by the sender
+     * Get a request by the sender.
      */
     public TeleportRequest getRequestBySender(UUID playerId) {
-        long requestTimeout = plugin.getConfig().getInt("tpa.timeout");
-        for (TeleportRequest request : requests) {
+        var requestTimeout = plugin.getConfig().getInt("tpa.timeout");
+        
+        for (Iterator<TeleportRequest> teleportRequestIterator = requests.iterator(); teleportRequestIterator.hasNext(); ) {
+            var request = teleportRequestIterator.next();
+
             if (request.getSender().equals(playerId)) {
                 if (request.isTimedOut(requestTimeout)) {
-                    requests.remove(request); // cleanup
+                    teleportRequestIterator.remove();
+
                     return null;
                 }
+
                 return request;
             }
         }
@@ -209,17 +212,17 @@ public class TeleportRequestManager {
     }
 
     /**
-     * Get all requests
+     * Get all requests.
      */
     public List<TeleportRequest> getRequests() {
         return requests;
     }
 
     /**
-     * Get all requests between two players
+     * Get a request between two players.
      */
     public TeleportRequest getRequest(UUID sender, UUID receiver) {
-        for (TeleportRequest request : requests) {
+        for (var request : requests) {
             if (request.getSender().equals(sender) && request.getReceiver().equals(receiver)) {
                 return request;
             }
@@ -233,22 +236,15 @@ public class TeleportRequestManager {
     }
 
     /**
-     * Remove all requests from or to a specific player
+     * Remove all requests from or to a specific player.
      */
     public void removeRequests(UUID playerId) {
-        List<TeleportRequest> foundRequests = new ArrayList<>();
+        var toRemove = requests.stream()
+                .filter(request -> request.getSender().equals(playerId) || request.getReceiver().equals(playerId))
+                .toList();
 
-        for (TeleportRequest request : requests) {
-            if (request.getSender().equals(playerId) || request.getReceiver().equals(playerId)) {
-                foundRequests.add(request);
-            }
-        }
-
-        for (TeleportRequest request : foundRequests) {
-            cancelRequest(request);
-            requests.remove(request);
-        }
-
+        toRemove.forEach(this::cancelRequest);
+        requests.removeAll(toRemove);
         returnRequests.remove(playerId);
     }
 
@@ -256,78 +252,56 @@ public class TeleportRequestManager {
         request.setAccepted(true);
     }
 
-    // We don't talk about the code below
-
-    public void cancelRequest(TeleportRequest request, String senderReason, String receiverReason) {
-        Player sender = plugin.getServer().getPlayer(request.getSender());
-        Player receiver = plugin.getServer().getPlayer(request.getReceiver());
-        String prefix = plugin.translate("messages.prefix");
+    public void cancelRequest(TeleportRequest request, String senderMessage, String receiverMessage) {
+        var sender = plugin.getServer().getPlayer(request.getSender());
+        var receiver = plugin.getServer().getPlayer(request.getReceiver());
+        var prefix = plugin.translate("messages.prefix");
 
         if (sender == null && receiver == null) {
-            // both players are offline or invalid
             requests.remove(request);
             return;
         }
 
         if (sender != null) {
-            sender.sendMessage(prefix + plugin.translate(senderReason));
+            sender.sendMessage(prefix + senderMessage);
         }
 
-        if (receiver != null && !receiverReason.isEmpty()) {
-            receiver.sendMessage(prefix + plugin.translate(receiverReason));
+        if (receiver != null && receiverMessage != null && !receiverMessage.isEmpty()) {
+            receiver.sendMessage(prefix + receiverMessage);
         }
 
         requests.remove(request);
     }
 
-    public void cancelRequest(ReturnRequest request, String senderReason, String receiverReason) {
-        Player sender = plugin.getServer().getPlayer(request.getPlayerId());
-        String prefix = plugin.translate("messages.prefix");
-
-        if (sender == null) {
-            returnRequests.remove(request.getPlayerId());
-            return;
-        }
-
-        sender.sendMessage(prefix + plugin.translate(senderReason));
-        returnRequests.remove(request.getPlayerId());
+    public void cancelRequest(TeleportRequest request, String key, Map<String, String> placeholders) {
+        cancelRequest(request, plugin.translate(key, placeholders));
     }
 
-    public void cancelRequest(TeleportRequest request, String key, Map<String, String> placeholders)
-    {
-        this.cancelRequest(request, plugin.translate(key,placeholders));
+
+    public void cancelRequest(TeleportRequest request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders) {
+        cancelRequest(request, plugin.translate(senderKey, senderPlaceholders), plugin.translate(receiverKey, receiverPlaceholders));
     }
 
-    public void cancelRequest(ReturnRequest returnRequest, String key, Map<String, String> placeholders)
-    {
-        this.cancelRequest(returnRequest, plugin.translate(key,placeholders));
-    }
-
-    public void cancelRequest(TeleportRequest request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders)
-    {
-        cancelRequest(request,
-                plugin.translate(senderKey,senderPlaceholders),
-                plugin.translate(receiverKey,receiverPlaceholders)
-        );
-    }
-    public void cancelRequest(ReturnRequest request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders)
-    {
-        cancelRequest(request,
-                plugin.translate(senderKey,senderPlaceholders),
-                plugin.translate(receiverKey,receiverPlaceholders)
-        );
-    }
 
     public void cancelRequest(TeleportRequest request, String reason) {
         cancelRequest(request, reason, reason);
     }
+
     public void cancelRequest(ReturnRequest request, String reason) {
-        cancelRequest(request, reason, reason);
+        var sender = plugin.getServer().getPlayer(request.getPlayerId());
+        var prefix = plugin.translate("messages.prefix");
+
+        if (sender != null) {
+            sender.sendMessage(prefix + reason);
+        }
+
+        returnRequests.remove(request.getPlayerId());
     }
 
     public void cancelRequest(TeleportRequest request) {
         cancelRequest(request, "messages.request.canceled");
     }
+
     public void cancelRequest(ReturnRequest request) {
         cancelRequest(request, "messages.request.canceled");
     }

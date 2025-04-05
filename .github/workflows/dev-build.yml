@@ -26,4 +26,4 @@ jobs:
           automatic_release_tag: "latest-dev"
           prerelease: true
           files: |
-            target/tpa-*.jar
+            target/just-tpa-*.jar

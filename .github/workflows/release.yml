@@ -32,7 +32,7 @@ jobs:
           #curseforge-id: TODO? do i even want to publish on curseforge? idk
           #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           files: |
-            target/tpa-${{ github.event.release.tag_name }}.jar
+            target/just-tpa-${{ github.event.release.tag_name }}.jar
 
           loaders: |
             spigot

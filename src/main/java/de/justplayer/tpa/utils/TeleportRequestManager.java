@@ -119,14 +119,14 @@ public class TeleportRequestManager {
                 continue;
             }
 
-            var hasBypassTimeout = teleportPlayer.hasPermission("justplayer.tpa.timeout.bypass");
+            var hasBypassReturnTimeout = teleportPlayer.hasPermission("justplayer.tpa.return-timeout.bypass");
             var hasBypassWait = teleportPlayer.hasPermission("justplayer.tpa.wait.bypass");
             var isTeleporting = request.isTeleporting();
 
             if (!request.getRequested()) {
                 var timeout = plugin.getConfig().getInt("tpa.return-timeout");
 
-                if (!hasBypassTimeout && timeout > 0 && request.isTimedOut(timeout)) {
+                if (!hasBypassReturnTimeout && timeout > 0 && request.isTimedOut(timeout)) {
                     plugin.log("Return request for " + request.getPlayerId() + " has timed out");
                     returnRequests.remove(playerId);
                 }

@@ -60,6 +60,6 @@ permissions:
   justplayer.tpa.wait.bypass:
     description: "Allows a player to bypass the teleport wait time"
     default: op
-  justplayer.tpa.timeout.bypass:
-    description: "Allows a player to bypass the teleport timeout (Requests won't time out anymore)"
+  justplayer.tpa.return-timeout.bypass:
+    description: "Allows a player to bypass the return timeout (won't time out anymore)"
     default: op

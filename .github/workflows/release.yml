@@ -29,7 +29,7 @@ jobs:
           #modrinth-featured: true
           #modrinth-unfeature-mode: subset
 
-          #curseforge-id: TODO? do i even want to publish on curseforge? idk
+          #curseforge-id: 934935
           #curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           files: |
             target/just-tpa-${{ github.event.release.tag_name }}.jar

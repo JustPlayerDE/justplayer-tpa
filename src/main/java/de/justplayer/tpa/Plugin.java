@@ -219,9 +219,15 @@ public class Plugin extends JavaPlugin {
 
             if(prefix.equals("Warning")) {
                 getLogger().warning(message);
-            } else {
-                getLogger().info("[" + prefix + "] " + message);
+                return;
             }
+
+            if(prefix.isBlank() || prefix.equals("Info")) {
+                getLogger().info(message);
+                return;
+            }
+
+            getLogger().info("[" + prefix + "] " + message);
         } else {
             getLogger().info(message);
         }

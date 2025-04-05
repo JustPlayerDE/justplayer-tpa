@@ -23,6 +23,10 @@ public class Plugin extends JavaPlugin {
     public CooldownManager cooldownManager;
     public TeleportRequestManager teleportRequestManager;
 
+    // Important for future updates and features
+    public boolean isFolia = false;
+    public boolean isPaper = false;
+
     public Plugin() {
         config = new Config(this);
         cooldownManager = new CooldownManager();
@@ -31,6 +35,8 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        checkPlatformStuff();
+
         initialiseCommands();
 
         initialiseEvents();
@@ -44,6 +50,26 @@ public class Plugin extends JavaPlugin {
         getLogger().info("JustTPA initialized");
         if (getDescription().getVersion().contains("dev")) {
             getLogger().warning("Using Development version, plugin may be unstable. bStats and Update checks are disabled.");
+        }
+    }
+
+    private void checkPlatformStuff() {
+        // Folia
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            log("Running on Folia");
+            isFolia = true;
+        } catch (ClassNotFoundException e) {
+            isFolia = false;
+        }
+
+        // Paper
+        try {
+            Class.forName("io.papermc.paper.util.Tick");
+            log("Running on Paper");
+            isPaper = true;
+        } catch (ClassNotFoundException e) {
+            isPaper = false;
         }
     }
 

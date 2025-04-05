@@ -1,7 +1,7 @@
 package de.justplayer.tpa.listeners;
 
 import de.justplayer.tpa.Plugin;
-import de.justplayer.tpa.Request;
+import de.justplayer.tpa.TeleportRequest;
 import de.justplayer.tpa.ReturnRequest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,7 +32,7 @@ public class PlayerMoveListener implements Listener {
             return;
         }
 
-        Request teleportRequest = this.plugin.teleportRequestManager.getRequestBySender(event.getPlayer().getUniqueId());
+        TeleportRequest teleportRequest = this.plugin.teleportRequestManager.getRequestBySender(event.getPlayer().getUniqueId());
         if( teleportRequest != null && teleportRequest.isTeleporting()) {
             plugin.log("Player " + event.getPlayer().getUniqueId() + " has moved while being teleported.", "Debug");
             Player receiver = plugin.getServer().getPlayer(teleportRequest.getReceiver());

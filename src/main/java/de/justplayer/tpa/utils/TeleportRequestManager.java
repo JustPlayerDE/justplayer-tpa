@@ -1,7 +1,7 @@
 package de.justplayer.tpa.utils;
 
 import de.justplayer.tpa.Plugin;
-import de.justplayer.tpa.Request;
+import de.justplayer.tpa.TeleportRequest;
 import de.justplayer.tpa.ReturnRequest;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,7 +12,7 @@ import java.util.*;
 
 public class TeleportRequestManager {
     private final Plugin plugin;
-    private final List<Request> requests = new ArrayList<>();
+    private final List<TeleportRequest> requests = new ArrayList<>();
     private final HashMap<UUID, ReturnRequest> returnRequests = new HashMap<>();
     private BukkitTask scheduler;
 
@@ -28,7 +28,7 @@ public class TeleportRequestManager {
 
         this.scheduler = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             String prefix = plugin.translate("messages.prefix");
-            List<Request> requestList = new ArrayList<>(requests);
+            List<TeleportRequest> requestList = new ArrayList<>(requests);
             HashMap<UUID, ReturnRequest> returnRequestMap = new HashMap<>(returnRequests);
             List<UUID> ignoredPlayersForThisRun = new ArrayList<>();
             int warmUpTime = plugin.config.getInt("tpa.wait", 0);
@@ -79,7 +79,7 @@ public class TeleportRequestManager {
             });
 
             // Then normal requests
-            for (Request request : requestList) {
+            for (TeleportRequest request : requestList) {
                 Player sender = plugin.getServer().getPlayer(request.getSender());
                 Player receiver = plugin.getServer().getPlayer(request.getReceiver());
 
@@ -165,7 +165,7 @@ public class TeleportRequestManager {
      * Creates a new teleport request
      */
     public void createRequest(UUID sender, UUID receiver, long timestamp, boolean isHereRequest) {
-        requests.add(new Request(sender, receiver, timestamp, isHereRequest));
+        requests.add(new TeleportRequest(sender, receiver, timestamp, isHereRequest));
     }
 
     /**
@@ -178,10 +178,10 @@ public class TeleportRequestManager {
     /**
      * Get all requests for a specific player (receiver)
      */
-    public List<Request> getRequestsForPlayer(UUID playerId) {
-        List<Request> foundRequests = new ArrayList<>();
+    public List<TeleportRequest> getRequestsForPlayer(UUID playerId) {
+        List<TeleportRequest> foundRequests = new ArrayList<>();
 
-        for (Request request : requests) {
+        for (TeleportRequest request : requests) {
             if (request.getReceiver().equals(playerId)) {
                 foundRequests.add(request);
             }
@@ -193,9 +193,9 @@ public class TeleportRequestManager {
     /**
      * Get a request by the sender
      */
-    public Request getRequestBySender(UUID playerId) {
+    public TeleportRequest getRequestBySender(UUID playerId) {
         long requestTimeout = plugin.getConfig().getInt("tpa.timeout");
-        for (Request request : requests) {
+        for (TeleportRequest request : requests) {
             if (request.getSender().equals(playerId)) {
                 if (request.isTimedOut(requestTimeout)) {
                     requests.remove(request); // cleanup
@@ -211,15 +211,15 @@ public class TeleportRequestManager {
     /**
      * Get all requests
      */
-    public List<Request> getRequests() {
+    public List<TeleportRequest> getRequests() {
         return requests;
     }
 
     /**
      * Get all requests between two players
      */
-    public Request getRequest(UUID sender, UUID receiver) {
-        for (Request request : requests) {
+    public TeleportRequest getRequest(UUID sender, UUID receiver) {
+        for (TeleportRequest request : requests) {
             if (request.getSender().equals(sender) && request.getReceiver().equals(receiver)) {
                 return request;
             }
@@ -236,15 +236,15 @@ public class TeleportRequestManager {
      * Remove all requests from or to a specific player
      */
     public void removeRequests(UUID playerId) {
-        List<Request> foundRequests = new ArrayList<>();
+        List<TeleportRequest> foundRequests = new ArrayList<>();
 
-        for (Request request : requests) {
+        for (TeleportRequest request : requests) {
             if (request.getSender().equals(playerId) || request.getReceiver().equals(playerId)) {
                 foundRequests.add(request);
             }
         }
 
-        for (Request request : foundRequests) {
+        for (TeleportRequest request : foundRequests) {
             cancelRequest(request);
             requests.remove(request);
         }
@@ -252,13 +252,13 @@ public class TeleportRequestManager {
         returnRequests.remove(playerId);
     }
 
-    public void acceptRequest(Request request) {
+    public void acceptRequest(TeleportRequest request) {
         request.setAccepted(true);
     }
 
     // We don't talk about the code below
 
-    public void cancelRequest(Request request, String senderReason, String receiverReason) {
+    public void cancelRequest(TeleportRequest request, String senderReason, String receiverReason) {
         Player sender = plugin.getServer().getPlayer(request.getSender());
         Player receiver = plugin.getServer().getPlayer(request.getReceiver());
         String prefix = plugin.translate("messages.prefix");
@@ -293,7 +293,7 @@ public class TeleportRequestManager {
         returnRequests.remove(request.getPlayerId());
     }
 
-    public void cancelRequest(Request request, String key, Map<String, String> placeholders)
+    public void cancelRequest(TeleportRequest request, String key, Map<String, String> placeholders)
     {
         this.cancelRequest(request, plugin.translate(key,placeholders));
     }
@@ -303,7 +303,7 @@ public class TeleportRequestManager {
         this.cancelRequest(returnRequest, plugin.translate(key,placeholders));
     }
 
-    public void cancelRequest(Request request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders)
+    public void cancelRequest(TeleportRequest request, String senderKey, Map<String, String> senderPlaceholders, String receiverKey, Map<String, String> receiverPlaceholders)
     {
         cancelRequest(request,
                 plugin.translate(senderKey,senderPlaceholders),
@@ -318,14 +318,14 @@ public class TeleportRequestManager {
         );
     }
 
-    public void cancelRequest(Request request, String reason) {
+    public void cancelRequest(TeleportRequest request, String reason) {
         cancelRequest(request, reason, reason);
     }
     public void cancelRequest(ReturnRequest request, String reason) {
         cancelRequest(request, reason, reason);
     }
 
-    public void cancelRequest(Request request) {
+    public void cancelRequest(TeleportRequest request) {
         cancelRequest(request, "messages.request.canceled");
     }
     public void cancelRequest(ReturnRequest request) {

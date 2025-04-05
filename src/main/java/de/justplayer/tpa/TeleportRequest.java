@@ -2,7 +2,7 @@ package de.justplayer.tpa;
 
 import java.util.UUID;
 
-public class Request {
+public class TeleportRequest {
     private final UUID sender;
     private final UUID receiver;
     private final long timestamp;
@@ -13,7 +13,7 @@ public class Request {
     private final boolean isHereRequest;
     private boolean isAccepted = false;
 
-    public Request(UUID sender, UUID receiver, long timestamp, boolean isHereRequest) {
+    public TeleportRequest(UUID sender, UUID receiver, long timestamp, boolean isHereRequest) {
         this.sender = sender;
         this.receiver = receiver;
         this.timestamp = timestamp;

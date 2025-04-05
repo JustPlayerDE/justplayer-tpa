@@ -1,7 +1,7 @@
 package de.justplayer.tpa.commands;
 
 import de.justplayer.tpa.Plugin;
-import de.justplayer.tpa.Request;
+import de.justplayer.tpa.TeleportRequest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,14 +33,14 @@ public class tpacceptCommandHandler implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            List<Request> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
+            List<TeleportRequest> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
 
             if (requests.isEmpty()) {
                 player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found"));
                 return true;
             }
 
-            Request request = null;
+            TeleportRequest request = null;
             Player requestSender = null;
             for (int i = requests.size() - 1; i >= 0; i--) {
                 requestSender = plugin.getServer().getPlayer(requests.get(i).getSender());
@@ -67,7 +67,7 @@ public class tpacceptCommandHandler implements CommandExecutor {
             return true;
         }
 
-        Request request = plugin.teleportRequestManager.getRequest(requestSender.getUniqueId(), player.getUniqueId());
+        TeleportRequest request = plugin.teleportRequestManager.getRequest(requestSender.getUniqueId(), player.getUniqueId());
 
         if (request == null) {
             player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found-by", Map.of("playername", args[0])));

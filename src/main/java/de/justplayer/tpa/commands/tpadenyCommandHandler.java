@@ -1,7 +1,7 @@
 package de.justplayer.tpa.commands;
 
 import de.justplayer.tpa.Plugin;
-import de.justplayer.tpa.Request;
+import de.justplayer.tpa.TeleportRequest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,7 +29,7 @@ public class tpadenyCommandHandler implements CommandExecutor {
             return true;
         }
 
-        List<Request> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
+        List<TeleportRequest> requests = plugin.teleportRequestManager.getRequestsForPlayer(player.getUniqueId());
         if (requests.isEmpty()) {
             player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found"));
             return true;
@@ -43,7 +43,7 @@ public class tpadenyCommandHandler implements CommandExecutor {
                 return true;
             }
 
-            Request request = plugin.teleportRequestManager.getRequest(requestSender.getUniqueId(), player.getUniqueId());
+            TeleportRequest request = plugin.teleportRequestManager.getRequest(requestSender.getUniqueId(), player.getUniqueId());
 
             if(request == null) {
                 player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found-by",
@@ -61,7 +61,7 @@ public class tpadenyCommandHandler implements CommandExecutor {
             return true;
         }
 
-        Request request = requests.get(0);
+        TeleportRequest request = requests.get(0);
         Player requestSender = plugin.getServer().getPlayer(request.getSender());
         String senderName = (requestSender != null ? requestSender.getName() : "Unknown Player");
 

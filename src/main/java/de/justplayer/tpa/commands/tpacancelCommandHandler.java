@@ -1,7 +1,7 @@
 package de.justplayer.tpa.commands;
 
 import de.justplayer.tpa.Plugin;
-import de.justplayer.tpa.Request;
+import de.justplayer.tpa.TeleportRequest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,7 +25,7 @@ public class tpacancelCommandHandler implements CommandExecutor {
             return true;
         }
 
-        Request request = plugin.teleportRequestManager.getRequestBySender(player.getUniqueId());
+        TeleportRequest request = plugin.teleportRequestManager.getRequestBySender(player.getUniqueId());
 
         if (request == null) {
             player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.request-not-found"));

@@ -112,7 +112,7 @@ public class Plugin extends JavaPlugin {
     }
 
     private void initialiseStatistics() {
-        if (!config.getBoolean("bStats.enabled") || (isDevelopmentVersion && !isGitVersion)) {
+        if (!config.getBoolean("bStats.enabled") || isDevelopmentVersion) {
             return;
         }
 

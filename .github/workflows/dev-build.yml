@@ -23,7 +23,7 @@ jobs:
         with:
           name: "Development build"
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: "latest-dev"
+          automatic_release_tag: "latest"
           prerelease: true
           files: |
             target/just-tpa-*.jar

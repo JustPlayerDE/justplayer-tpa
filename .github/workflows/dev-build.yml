@@ -18,7 +18,7 @@ jobs:
           java-version: 18
           cache: 'maven'
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package "-Drevision=dev-${{ github.ref_name }}-${GITHUB_SHA::6}"
+        run: mvn --batch-mode --update-snapshots package "-Drevision=git-${{ github.ref_name }}-${GITHUB_SHA::6}"
       - uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
           name: "Development build"

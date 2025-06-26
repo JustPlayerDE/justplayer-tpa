@@ -29,6 +29,7 @@ public class Plugin extends JavaPlugin {
     public boolean isFolia = false; // for the future
     public boolean isPaper = false; // for the future
     public boolean isDevelopmentVersion = false;
+    public boolean isGitVersion = false;
 
     public Plugin() {
         // Folia
@@ -53,6 +54,10 @@ public class Plugin extends JavaPlugin {
         if (getDescription().getVersion().contains("dev")) {
             log("Using Development version, plugin may be unstable. bStats and Update checks are disabled.", "Warning");
             isDevelopmentVersion = true;
+        }
+        if (getDescription().getVersion().contains("git")) {
+            log("Using Git version, Update checks are disabled.");
+            isGitVersion = true;
         }
 
         initialiseCommands();
@@ -107,7 +112,7 @@ public class Plugin extends JavaPlugin {
     }
 
     private void initialiseStatistics() {
-        if (!config.getBoolean("bStats.enabled") || isDevelopmentVersion) {
+        if (!config.getBoolean("bStats.enabled") || (isDevelopmentVersion && !isGitVersion)) {
             return;
         }
 
@@ -117,7 +122,7 @@ public class Plugin extends JavaPlugin {
 
 
     private void checkForUpdates() {
-        if (!config.getBoolean("check-for-updates") || isDevelopmentVersion) {
+        if (!config.getBoolean("check-for-updates") || isDevelopmentVersion || isGitVersion) {
             return;
         }
 

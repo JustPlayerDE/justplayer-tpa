@@ -18,7 +18,8 @@ The reason for why I even made this plugin is because no existing tpa plugin has
 
 ## Other Permissions
 
-- `justplayer.tpa.wait.bypass` - bypasses the wait for teleports if enabled. OP by Default.
+- `justplayer.tpa.wait.bypass` - Allows a player to bypass the teleport wait time. OP by Default.
+- `justplayer.tpa.return-timeout.bypass` - Allows a player to bypass the return timeout (won't time out anymore). OP by Default.
 
 ## Supported versions
 

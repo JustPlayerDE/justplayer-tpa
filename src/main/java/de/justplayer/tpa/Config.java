@@ -35,20 +35,29 @@ public class Config {
                 "Time in seconds you have to wait before you can send another tpa here request"
         ));
 
-        config.addDefault("bStats.enabled", true);
-        config.setComments("bStats.enabled", List.of(
-                "Enable bStats for this plugin"
-        ));
-
         config.addDefault("tpa.verbose", false);
         config.setComments("tpa.verbose", List.of(
                 "Makes the plugin spam the console with maybe useful information (more verbose)"
+        ));
+
+        /* Feature Flags */
+        config.addDefault("features.tpa", true);
+        config.addDefault("features.tpa-here", true);
+        config.addDefault("features.tpa-return", true);
+        config.setComments("features", List.of(
+                "Here you can disable features in case you don't have a permission plugin or really don't want to use them.",
+                "Disabling tpa and tpa-here will make the plugin useless though"
         ));
 
         // We use modrinth to check for updates
         config.addDefault("check-for-updates", true);
         config.setComments("check-for-updates", List.of(
                 "Check for updates on startup, this uses the modrinth api to get the newest version for your server."
+        ));
+
+        config.addDefault("bStats.enabled", true);
+        config.setComments("bStats.enabled", List.of(
+                "Enable bStats for this plugin"
         ));
 
         config.addDefault("messages.prefix", "§8[§6JustTPA§8] §7");

@@ -64,9 +64,6 @@ public class Plugin extends JavaPlugin {
 
         initialiseEvents();
         initialiseOptionalEvents();
-
-        teleportRequestManager.start();
-
         initialiseStatistics();
         checkForUpdates();
 
@@ -90,7 +87,15 @@ public class Plugin extends JavaPlugin {
         }
         PluginManager pluginManager = getServer().getPluginManager();
 
-        if (config.getInt("tpa.wait", 0) > 0) {
+        // well, i really dont know why you would do that but i wont ask why
+        if(isFeatureEnabled("tpa") || isFeatureEnabled("tpa-here")) {
+            teleportRequestManager.start();
+        } else {
+            log("All TPA Features are disabled", "Warning");
+            teleportRequestManager.stop();
+        }
+
+        if (config.getInt("tpa.wait", 0) > 0 && (isFeatureEnabled("tpa") || isFeatureEnabled("tpa-here"))) {
             log("Optional Listeners has been enabled.", "Debug");
             pluginManager.registerEvents(new PlayerMoveListener(this), this);
             pluginManager.registerEvents(new PlayerDamageListener(this), this);
@@ -107,8 +112,13 @@ public class Plugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("tpaccept")).setExecutor(new tpacceptCommand(this));
         Objects.requireNonNull(getCommand("tpadeny")).setExecutor(new tpadenyCommand(this));
         Objects.requireNonNull(getCommand("tpacancel")).setExecutor(new tpacancelCommand(this));
-        Objects.requireNonNull(getCommand("tpareload")).setExecutor(new tpareloadCommand(this));
         Objects.requireNonNull(getCommand("tpareturn")).setExecutor(new tpareturnCommand(this));
+        Objects.requireNonNull(getCommand("tpareload")).setExecutor(new tpareloadCommand(this));
+    }
+
+    public boolean isFeatureEnabled(String feature)
+    {
+        return config.getBoolean("features." + feature);
     }
 
     private void initialiseStatistics() {

@@ -20,6 +20,11 @@ public class tpareturnCommand implements CommandExecutor {
         Player player;
         if (sender instanceof Player) {
             player = (Player) sender;
+
+            if(!plugin.isFeatureEnabled("tpa-return")) {
+                player.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.feature-disabled"));
+                return true;
+            }
         } else {
             sender.sendMessage(plugin.translate("messages.prefix") + plugin.translate("messages.errors.player-required"));
             return true;

@@ -64,7 +64,7 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>de.justplayer.tpa.thirdparty</shadedPattern>
+                            <shadedPattern>de.justplayer.tpa.thirdparty.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

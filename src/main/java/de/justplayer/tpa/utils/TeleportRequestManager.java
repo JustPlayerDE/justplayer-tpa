@@ -22,10 +22,11 @@ public class TeleportRequestManager {
     }
 
     public void start() {
-        if (this.scheduler != null) {
-            plugin.log("Teleport Scheduler has been started while one is already running.", "Warning");
+        if (this.scheduler != null && !this.scheduler.isCancelled()) {
+            plugin.log("Teleport Scheduler has been started while one is already running.");
             this.scheduler.cancel();
         }
+        plugin.log("Starting teleport scheduler task");
 
         this.scheduler = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             var prefix = plugin.translate("messages.prefix");
@@ -159,9 +160,11 @@ public class TeleportRequestManager {
     }
 
     public void stop() {
-        plugin.log("Stopping teleport scheduler task.");
         if (scheduler != null && !scheduler.isCancelled()) {
+            plugin.log("Stopping teleport scheduler task.");
             scheduler.cancel();
+        } else {
+            plugin.log("teleport scheduler task already stopped.");
         }
     }
 

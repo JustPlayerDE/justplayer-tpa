@@ -56,7 +56,7 @@ public class Plugin extends JavaPlugin {
             isDevelopmentVersion = true;
         }
         if (getDescription().getVersion().contains("git")) {
-            log("Using Git version, Update checks are disabled.");
+            log("Using Git version, Update checks are disabled.", "Info");
             isGitVersion = true;
         }
 

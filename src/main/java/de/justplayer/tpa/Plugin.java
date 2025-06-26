@@ -26,7 +26,7 @@ public class Plugin extends JavaPlugin {
     public CooldownManager cooldownManager;
     public TeleportRequestManager teleportRequestManager;
 
-    public boolean isFolia = false; // for the future
+    public boolean isFolia = false; // currently not supported (at all), just for the future
     public boolean isPaper = false; // for the future
     public boolean isDevelopmentVersion = false;
     public boolean isGitVersion = false;
